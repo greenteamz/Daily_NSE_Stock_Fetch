@@ -28,7 +28,33 @@ jobs:
           SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
         run: |
           echo "$SERVICE_ACCOUNT_JSON" > service_account.json
-          echo "$SERVICE_ACCOUNT_JSON"
 
-      - name: Run Script
+      - name: Debug Service Account File
+        run: head -n 5 service_account.json
+        
+      - name: Debug the Service Account JSON
+        run: |
+          head -n 10 service_account.json
+
+      - name: Debug the Service Account JSON
+        run: |
+          echo "{
+  "type": "service_account",
+  "project_id": "neat-talon-437510-c3",
+  "private_key_id": "fe1c2031d46a16354998da14b41bae8f4526869b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDa9yWnz34mNsRA\nYgkcfQ8easukNzG3S0t7mV6XrIXGeD4O3fGn5tT3A5pQfddNwj0sg0meIOnMub26\n2fSq4ShAINRuZYoq/bwBG0/Kkq+TNDt92QrqIGOJLfWNLUmzAHG6lLc0bpRpezLt\nZXtXK4lS/afuDhX+TtZEMhyqnKb5+GNzI6m6Ty7ucumy5MaewqT/Bld/VuKhT0A6\n097l6NuF4kTmGgOIl/vSuwlaS/0eoZZBv1ht+AvAn9e/tQb7wiScHF2n5klFHCNj\nSjO88D7Pf8yG/C2aZfXF9/oxbVPJuf1AWSjaCKQu7EP7A/HqPw/TstKTe9m9iTEp\nRbo3osmFAgMBAAECggEAEG53fu5NMyTs+T/iGycvWUL+YSZbLrwRwAa0WIFz0H75\neTgiiE0EMj0s+VlYLNekq5B2l800fk559GmiuKgI0zcjed1Yzv0XfKXGCReU4WEM\nDdeZwBQKJCM0yBFb9HjWEABU9zRNItVB7xqsdNApj/bFAVJBSEI2RgvUpuD2js93\nX4lg7FTsQFCH8NWvC3/D6FUFipw8h0WPbmuQsRdEr/SnB1liAD0R6343MEOtzL9G\nLhopaEQfeweWK60Cg7sRFBfAr8FK6BaY/J1NJQDg5xZdDit8EgTYMW2JcExp1RM7\nb46gx39QDqBiGf2zggI7G8YcaGFCD009L/L5w/nDyQKBgQD6pBvGllCZU1DbfaCh\n2cACs2FEcptRuxtCMafqR2bEOOxrjQkOQYxKmZMFDHvGqYjtKDg+ZVf2b2SbFOqX\nDXlRKfESVrbvhlT0BDSGhAJ5bQALux8Uoo93wGcTSeCPfsQka/FBhadyAwuhJEaa\nriqhTvJn27kk7kXFyyu0FncQZwKBgQDfpak60Gd+iKpRmTqSb+mTMeHGjMvaAhlo\nieaP6celcpPVLvxGSvItf4ada8BH7N41QryIyBpsL9yKeUdAhf2eSnYAsqFq9IX1\nN2efJurBvibWhuqedafx+7CcD1Oa4nw5FoK+7e7ox2QV9kteiYyeGGqfeYWSh3c9\nSlASDWozMwKBgEhO7gB1vxzsz2fzL1NiOaXN0GLp2WtT2oJXRwUswjYb4gEJODKX\nsHyZH7QWLONcZ7dbohZGMIFVE6Y1+5PGfFhxDC5pO++QRpP7XpfsH7aePqQjwMy4\nNUGsDVCgQJvFS5riVUC86VjYDhPYHlJjqsLMvtw9pIVGBHUSrzIORR1DAoGBAMlH\nKMUb5ukESnThuMsuGUM2M4IkGRr9pKxm37BJsDqAoffNL5J7xPWZvidTYFvbHClH\nBLL9lHoloRCnEa9KZ/TcAtOh8JB3vU/yKzobJlBzuDR+fA1cymeII2xwhsfwaehf\nEBCRxuCNAtCZNz+//2QRiXQ5RDOZ44CvrtxwYlHtAoGBAKaejl8RERUQhvELYa3q\nd/yQPNsV7FtAcR78W+rZ7kTQ6sRrKX7AQc/JGhpKrDRXRz/7iIilYIN93HnG8Coi\n5TuWpK6up2Lh58SuM6hifAGBpBO8yBI1ep2qAu5vtazJg2m1zLkLf5Zoq2w0YDYE\ni5fMo9v1MlZcbg7EOb2+0kUa\n-----END PRIVATE KEY-----\n",
+  "client_email": "nse-automation@neat-talon-437510-c3.iam.gserviceaccount.com",
+  "client_id": "115586726958590515234",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/nse-automation%40neat-talon-437510-c3.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}" > service_account.json
+
+      - name: Debug the Service Account JSON
+        run: |
+        head -n 10 service_account.json
+    
+      - name: Run Script 7_12
         run: python update_nse_parallel.py
