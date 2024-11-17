@@ -2,9 +2,40 @@ import yfinance as yf
 from datetime import date
 import gspread
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from google.oauth2.service_account import Credentials
 
 # Authenticate Google Sheets API
 gc = gspread.service_account(filename="service_account.json")
+
+# Authenticate with Google Drive API
+scopes = ['https://www.googleapis.com/auth/drive']
+credentials = Credentials.from_service_account_file(filename, scopes=scopes)
+drive_service = build('drive', 'v3', credentials=credentials)
+
+# Function to list all files accessible by the service account
+def list_files():
+    results = drive_service.files().list(pageSize=50, fields="files(id, name)").execute()
+    files = results.get('files', [])
+
+    if not files:
+        print("No files found.")
+    else:
+        print("Files accessible by the service account:")
+        for file in files:
+            print(f"Name: {file['name']}, ID: {file['id']}")
+
+# Call the function to list files
+list_files()
+
+# Function to find the file ID of a file by name
+def get_file_id(file_name):
+    query = f"name = '{file_name}'"
+    results = drive_service.files().list(q=query, fields="files(id, name)").execute()
+    files = results.get('files', [])
+    if not files:
+        print(f"No file named '{file_name}' found.")
+        return None
+    return files[0]['id']  # Return the first match's file ID
 
 # Open the Google Spreadsheet (workbook) named 'NSE_symbol'
 spreadsheet = gc.open('NSE_symbol')  # Replace 'NSE_symbol' with the actual workbook name
