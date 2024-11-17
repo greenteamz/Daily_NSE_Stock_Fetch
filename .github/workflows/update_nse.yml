@@ -29,15 +29,6 @@ jobs:
         run: |
           echo "$SERVICE_ACCOUNT_JSON" > service_account.json
 
-      - name: Debug Service Account JSON File Content
-        run: |
-          echo "First 10 lines of service_account.json:"
-          head -n 10 service_account.json
-
-      - name: Validate JSON (Optional, you can remove if not needed)
-        run: |
-          python -c "import json; json.load(open('service_account.json'))"
-
       - name: Run NSE Data Update Script
         run: |
           python update_nse_parallel.py
