@@ -1,0 +1,13 @@
+[2024-11-18 00:54:20] Fetching data for RELIANCE.NS...
+[2024-11-18 00:54:21] Successfully updated data for RELIANCE.NS.
+[2024-11-18 00:54:21] Processed 1/4 symbols.
+[2024-11-18 00:54:21] Fetching data for TCS.NS...
+[2024-11-18 00:54:21] Successfully updated data for TCS.NS.
+[2024-11-18 00:54:21] Processed 2/4 symbols.
+[2024-11-18 00:54:21] Fetching data for HDFCBANK.NS...
+[2024-11-18 00:54:21] Successfully updated data for HDFCBANK.NS.
+[2024-11-18 00:54:21] Processed 3/4 symbols.
+[2024-11-18 00:54:21] Fetching data for BHARTIARTL.NS...
+[2024-11-18 00:54:22] Successfully updated data for BHARTIARTL.NS.
+[2024-11-18 00:54:22] Processed 4/4 symbols.
+[2024-11-18 00:54:22] All data updated successfully in the sheet 'NSE_18_11_2024_00-54-17'.
