@@ -28,6 +28,7 @@ jobs:
           SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
         run: |
           echo "$SERVICE_ACCOUNT_JSON" > service_account.json
+          echo "$SERVICE_ACCOUNT_JSON"
 
       - name: Run Script
         run: python update_nse_parallel.py
