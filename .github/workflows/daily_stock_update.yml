@@ -39,10 +39,17 @@ jobs:
         python update_stock_data.py
 
     # Step 5: Commit and push any changes (log and CSV files)
-    - name: Commit and push changes
+    - name: Set up Git
       run: |
-        git config --global user.name 'Your GitHub Username'
-        git config --global user.email 'Your GitHub Email'
-        git add logs/*.txt csv/*.csv
-        git commit -m "Automated daily stock update"
-        git push
+        git config --global user.name "Aravinthkumar Stock Bot"
+        git config --global user.email "aravinthkumarj1@gmail.com"
+    
+    - name: Authenticate and Push Changes
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
+      run: |
+        git remote set-url origin https://x-access-token:${GH_PAT}@github.com/aravinthkumarj1/daily_stock_update.git
+        git add logs/* csv/*
+        git commit -m "Daily update: $(date)"
+        git push origin main
+
