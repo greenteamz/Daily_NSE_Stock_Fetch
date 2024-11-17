@@ -4,10 +4,20 @@ import gspread
 from google.oauth2.service_account import Credentials
 import os
 import subprocess
+import pytz
+
+# Define IST timezone
+IST = pytz.timezone('Asia/Kolkata')
+
+# Current IST datetime
+ist_now = datetime.now(IST)
+
+# Extract the date part from IST datetime
+ist_date = ist_now.date()
 
 # Generate log file name with date and time
-log_filename = f"log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
-csv_filename = f"symbol_data_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
+log_filename = f"log_{datetime.now(IST).strftime('%Y-%m-%d_%H-%M-%S')}.txt"
+csv_filename = f"symbol_data_{datetime.now(IST).strftime('%Y-%m-%d_%H-%M-%S')}.csv"
 
 # Set log and CSV file paths in the Git project
 LOG_FILE_PATH = os.path.join("logs", log_filename)
@@ -19,7 +29,7 @@ os.makedirs("csv", exist_ok=True)
 
 def log_message(message):
     """Write messages to log file and print them to console."""
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
     with open(LOG_FILE_PATH, "a") as log_file:
         log_file.write(f"[{timestamp}] {message}\n")
     print(f"[{timestamp}] {message}")
@@ -40,7 +50,9 @@ symbols = source_worksheet.col_values(1)[1:]  # Skip the header row
 symbols = [symbol if symbol.endswith('.NS') else f"{symbol}.NS" for symbol in symbols]
 
 # Define the sheet name for today's data with date and time
-sheet_name = f"NSE_{date.today().strftime('%d_%m_%Y')}_{datetime.now().strftime('%H-%M-%S')}"
+#sheet_name = f"NSE_{date.today().strftime('%d_%m_%Y')}_{datetime.now(IST).strftime('%H-%M-%S')}"
+# Define the sheet name using IST date and time
+sheet_name = f"NSE_{ist_date.strftime('%d_%m_%Y')}_{ist_now.strftime('%H-%M-%S')}"
 
 # Check if the sheet already exists
 #existing_sheet_names = [ws.title for ws in spreadsheet.worksheets()]
