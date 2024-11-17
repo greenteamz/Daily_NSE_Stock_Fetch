@@ -32,7 +32,13 @@ jobs:
         SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
       run: |
         echo "$SERVICE_ACCOUNT_JSON" > service_account.json
-          
+
+    # Step 4.0: git config
+    - name: Set up Git
+      run: |
+        git config --global user.name "Aravinthkumar Stock Bot"
+        git config --global user.email "aravinthkumarj1@gmail.com"
+        
     # Step 4: Run the stock data update script
     - name: Run stock data update script
       run: |
