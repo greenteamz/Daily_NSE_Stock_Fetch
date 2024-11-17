@@ -3,6 +3,7 @@ from datetime import date
 import gspread
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from google.oauth2.service_account import Credentials
+from googleapiclient.discovery import build
 
 # Authenticate Google Sheets API
 gc = gspread.service_account(filename="service_account.json")
