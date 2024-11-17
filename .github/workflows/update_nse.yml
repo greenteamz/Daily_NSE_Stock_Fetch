@@ -30,4 +30,4 @@ jobs:
           echo "$SERVICE_ACCOUNT_JSON" > service_account.json
 
       - name: Run Script
-        run: python update_nse_data.py
+        run: python update_nse_parallel.py
