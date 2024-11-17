@@ -5,6 +5,7 @@ from google.oauth2.service_account import Credentials
 import os
 import subprocess
 import pytz
+import time
 
 # Define IST timezone
 IST = pytz.timezone('Asia/Kolkata')
@@ -116,6 +117,8 @@ processed_count = 0
 for symbol in symbols:
     fetch_and_update_stock_data(symbol, new_worksheet)
     processed_count += 1
+    # Add a delay to avoid rate-limiting
+    time.sleep(10)
     log_message(f"Processed {processed_count}/{len(symbols)} symbols.")
 
 log_message(f"All data updated successfully in the sheet '{sheet_name}'.")
