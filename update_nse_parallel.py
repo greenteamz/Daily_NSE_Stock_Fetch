@@ -9,7 +9,7 @@ gc = gspread.service_account(filename="service_account.json")
 
 # Authenticate with Google Drive API
 scopes = ['https://www.googleapis.com/auth/drive']
-credentials = Credentials.from_service_account_file(filename, scopes=scopes)
+credentials = Credentials.from_service_account_file("service_account.json", scopes=scopes)
 drive_service = build('drive', 'v3', credentials=credentials)
 
 # Function to list all files accessible by the service account
