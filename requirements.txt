@@ -10,3 +10,4 @@ oauth2client
 bs4
 requests
 pytz
+openpyxl
