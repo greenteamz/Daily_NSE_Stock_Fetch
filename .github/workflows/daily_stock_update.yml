@@ -46,17 +46,19 @@ jobs:
       run: |
         DAY_OF_WEEK=$(date +%u) # 1=Monday, 7=Sunday
         if [[ "$DAY_OF_WEEK" -eq 1 || "$DAY_OF_WEEK" -eq 7 ]]; then
-          echo "Today is Sunday or Monday morning. Skipping execution."
+          echo "Skipping execution because today is Sunday or Monday morning."
           exit 0
         fi
 
     # Step 7: Run the stock data update script
     - name: Run stock data update script
+      if: ${{ steps.check_day.outcome != 'success' }} # Run only if previous step did not skip
       run: |
         python update_stock_data.py
 
     # Step 8: Authenticate and Push Changes
     - name: Authenticate and Push Changes
+      if: ${{ steps.check_day.outcome != 'success' }} # Run only if previous step did not skip
       env:
         GH_PAT: ${{ secrets.GH_PAT }}
       run: |
@@ -65,4 +67,3 @@ jobs:
         git add logs/* csv/* master/*
         git commit -m "Daily update: $(date)"
         git push origin main
-
