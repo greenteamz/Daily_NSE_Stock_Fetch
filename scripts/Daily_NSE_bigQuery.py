@@ -57,9 +57,10 @@ source_worksheet = spreadsheet.worksheet('symbol')  # Replace with your sheet na
 symbols = source_worksheet.col_values(1)[1:]  # Skip header row
 symbols = [symbol if symbol.endswith('.NS') else f"{symbol}.NS" for symbol in symbols]
 
-# Define BigQuery dataset and table
+# Define BigQuery dataset and table with the project ID
+PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
 BQ_DATASET = "nse_data"  # Replace with your dataset name
-BQ_TABLE = f"{BQ_DATASET}.daily_stock_data"
+BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_stock_data"  # Fully-qualified table name
 
 # Define schema for BigQuery table
 headers = [
