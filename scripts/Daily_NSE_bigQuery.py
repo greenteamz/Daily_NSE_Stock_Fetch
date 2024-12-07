@@ -89,29 +89,30 @@ headers = [
 PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d')
 headers_with_date = ["PreviousDayDate", "Symbol"] + headers
 
-# Ensure BigQuery dataset exists
 def ensure_dataset_exists():
     try:
         bq_client.get_dataset(BQ_DATASET)
         log_message(f"Dataset '{BQ_DATASET}' exists.")
-    except Exception:
-        dataset = bigquery.Dataset(f"{bq_client.project}.{BQ_DATASET}")
+    except google.api_core.exceptions.NotFound:
+        dataset = bigquery.Dataset(f"{PROJECT_ID}.{BQ_DATASET}")
         bq_client.create_dataset(dataset)
         log_message(f"Created dataset '{BQ_DATASET}'.")
 
-# Ensure BigQuery table exists
 def ensure_table_exists():
     try:
-        bq_client.get_table(BQ_TABLE)
-        log_message(f"Table '{BQ_TABLE}' exists.")
-    except Exception:
-        schema = [
-            bigquery.SchemaField("PreviousDayDate", "DATE"),
-            bigquery.SchemaField("Symbol", "STRING")
-        ] + [bigquery.SchemaField(header, "STRING") for header in headers]
+        table = bq_client.get_table(BQ_TABLE)
+        log_message(f"Table '{BQ_TABLE}' already exists.")
+    except google.api_core.exceptions.NotFound:
+        schema = [bigquery.SchemaField("Symbol", "STRING")] + [
+            bigquery.SchemaField(header, "STRING") for header in headers
+        ] + [bigquery.SchemaField("ExecutionDate", "DATE")]
+
         table = bigquery.Table(BQ_TABLE, schema=schema)
         bq_client.create_table(table)
         log_message(f"Created table '{BQ_TABLE}'.")
+    except Exception as e:
+        log_message(f"Error ensuring table exists: {e}")
+
 
 # Initialize Excel Workbook
 workbook = Workbook()
