@@ -13,3 +13,4 @@ pytz
 openpyxl
 google-cloud-bigquery
 google-auth
+google-api-core
