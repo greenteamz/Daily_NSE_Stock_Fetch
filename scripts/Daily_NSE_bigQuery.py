@@ -59,8 +59,8 @@ symbols = [symbol if symbol.endswith('.NS') else f"{symbol}.NS" for symbol in sy
 
 # Define BigQuery dataset and table with the project ID
 PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
-BQ_DATASET = "nse_data"  # Replace with your dataset name
-BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_stock_data"  # Fully-qualified table name
+BQ_DATASET = "nse_stock"  # Replace with your dataset name
+BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_data"  # Fully-qualified table name
 
 # Define schema for BigQuery table
 headers = [
