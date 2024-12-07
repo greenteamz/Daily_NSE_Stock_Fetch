@@ -7,6 +7,10 @@ from openpyxl import Workbook
 import os
 import pytz
 import time
+from google.api_core.exceptions import NotFound
+from google.cloud import bigquery
+import logging
+
 
 # Define IST timezone
 IST = pytz.timezone('Asia/Kolkata')
@@ -100,9 +104,11 @@ def ensure_dataset_exists():
 
 def ensure_table_exists():
     try:
+        # Check if the table already exists
         table = bq_client.get_table(BQ_TABLE)
         log_message(f"Table '{BQ_TABLE}' already exists.")
-    except google.api_core.exceptions.NotFound:
+    except NotFound:
+        # Table does not exist, create it
         schema = [bigquery.SchemaField("Symbol", "STRING")] + [
             bigquery.SchemaField(header, "STRING") for header in headers
         ] + [bigquery.SchemaField("ExecutionDate", "DATE")]
