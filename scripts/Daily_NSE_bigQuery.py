@@ -3,14 +3,12 @@ from datetime import datetime, timedelta
 import gspread
 from google.oauth2.service_account import Credentials
 from google.cloud import bigquery
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
+import csv
 import os
 import pytz
 import time
-from google.api_core.exceptions import NotFound
-from google.cloud import bigquery
 import logging
-
 
 # Define IST timezone
 IST = pytz.timezone('Asia/Kolkata')
@@ -23,15 +21,18 @@ ist_date = ist_now.date()
 
 # Generate log and CSV file names
 log_filename = f"log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
-csv_filename = f"symbol_data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv"
-excel_filename = f"symbol_data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
+master_log_filename = f"Log_Master_NSE_BigQuery.txt"
+csv_filename = f"NSE_Stock_Master_BQ.csv"  # Append data for the same day
+excel_filename = f"NSE_Stock_Master_DataLake.xlsx"  # Excel file for today
 
 # Paths for logs, CSV, and Excel
+MASTER_LOG_FILE_PATH = os.path.join("logs", master_log_filename)
 LOG_FILE_PATH = os.path.join("logs", log_filename)
 CSV_FILE_PATH = os.path.join("csv", csv_filename)
 EXCEL_FILE_PATH = os.path.join("excel", excel_filename)
 
 # Ensure directories exist
+os.makedirs("master_log", exist_ok=True)
 os.makedirs("logs", exist_ok=True)
 os.makedirs("csv", exist_ok=True)
 os.makedirs("excel", exist_ok=True)
@@ -42,6 +43,8 @@ def log_message(message):
     timestamp = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
     with open(LOG_FILE_PATH, "a") as log_file:
         log_file.write(f"[{timestamp}] {message}\n")
+    with open(MASTER_LOG_FILE_PATH, "a") as master_log_file:
+        master_log_file.write(f"[{timestamp}] {message}\n")
     print(f"[{timestamp}] {message}")
 
 # Authenticate using the same service_account.json for both BigQuery and Google Sheets
@@ -97,7 +100,7 @@ def ensure_dataset_exists():
     try:
         bq_client.get_dataset(BQ_DATASET)
         log_message(f"Dataset '{BQ_DATASET}' exists.")
-    except google.api_core.exceptions.NotFound:
+    except NotFound:
         dataset = bigquery.Dataset(f"{PROJECT_ID}.{BQ_DATASET}")
         bq_client.create_dataset(dataset)
         log_message(f"Created dataset '{BQ_DATASET}'.")
@@ -109,9 +112,9 @@ def ensure_table_exists():
         log_message(f"Table '{BQ_TABLE}' already exists.")
     except NotFound:
         # Table does not exist, create it
-        schema = [bigquery.SchemaField("Symbol_Input", "STRING")] + [
+        schema = [bigquery.SchemaField("PreviousDayDate", "DATE"), bigquery.SchemaField("Symbol_Input", "STRING")] + [
             bigquery.SchemaField(header, "STRING") for header in headers
-        ] + [bigquery.SchemaField("ExecutionDate", "DATE")]
+        ]
 
         table = bigquery.Table(BQ_TABLE, schema=schema)
         bq_client.create_table(table)
@@ -119,13 +122,40 @@ def ensure_table_exists():
     except Exception as e:
         log_message(f"Error ensuring table exists: {e}")
 
+def append_to_csv(data_row):
+    """Append a row of data to the CSV file, adding the header only if it's a new file."""
+    write_header = not os.path.exists(CSV_FILE_PATH)  # Check if file exists
 
-# Initialize Excel Workbook
-workbook = Workbook()
-sheet = workbook.active
-sheet.append(["PreviousDayDate", "Symbol"] + headers)  # Add header row
+    with open(CSV_FILE_PATH, mode="a", newline="") as csv_file:
+        writer = csv.writer(csv_file)
+        if write_header:
+            writer.writerow(["PreviousDayDate", "Symbol_Input"] + headers)  # Add header row
+            log_message(f"Header added to CSV file: {CSV_FILE_PATH}")
+        writer.writerow(data_row)
+        log_message(f"Appended data to CSV file: {CSV_FILE_PATH}")
 
-# Fetch and update data for each symbol
+def append_to_excel(data_row):
+    """Append data to an Excel sheet, creating a new sheet for the day."""
+    try:
+        if os.path.exists(EXCEL_FILE_PATH):
+            workbook = load_workbook(EXCEL_FILE_PATH)
+        else:
+            workbook = Workbook()
+
+        sheet_name = f"NSE_{ist_date}"
+        if sheet_name not in workbook.sheetnames:
+            workbook.create_sheet(sheet_name)
+            sheet = workbook[sheet_name]
+            sheet.append(["PreviousDayDate", "Symbol_Input"] + headers)  # Add header
+        else:
+            sheet = workbook[sheet_name]
+
+        sheet.append(data_row)
+        workbook.save(EXCEL_FILE_PATH)
+        log_message(f"Data appended to Excel file: {EXCEL_FILE_PATH}")
+    except Exception as e:
+        log_message(f"Error saving to Excel: {e}")
+
 def fetch_and_update_stock_data(symbol):
     try:
         log_message(f"Fetching data for {symbol}...")
@@ -135,36 +165,41 @@ def fetch_and_update_stock_data(symbol):
         # Extract data and include the Previous Day Date
         info_row = [PREVIOUS_DAY_DATE, symbol] + [info.get(key, '') for key in headers]
 
-        # Append data to BigQuery
-        row = dict(zip(headers_with_date, info_row))
-        try:
-            errors = bq_client.insert_rows_json(BQ_TABLE, [row])  # Insert single row
-            if errors:
-                raise Exception(f"BigQuery insert errors: {errors}")
-            log_message(f"Successfully updated data for {symbol} in BigQuery.")
-        except Exception as bq_error:
-            log_message(f"BigQuery error for {symbol}: {bq_error}. Data saved locally.")
-
-        # Append data to CSV
-        with open(CSV_FILE_PATH, "a") as csv_file:
-            csv_file.write(",".join(map(str, info_row)) + "\n")
-
-        # Append data to Excel
-        sheet.append(info_row)
-        log_message(f"Data for {symbol} saved locally.")
+        # Append data to CSV and Excel
+        append_to_csv(info_row)
+        append_to_excel(info_row)
+        return info_row
     except Exception as e:
         log_message(f"Error fetching data for {symbol}: {e}")
+        return None
 
-# Ensure dataset and table exist
+def load_data_to_bigquery():
+    """Load data from the CSV file into BigQuery."""
+    try:
+        with open(CSV_FILE_PATH, "rb") as csv_file:
+            job_config = bigquery.LoadJobConfig(
+                source_format=bigquery.SourceFormat.CSV,
+                skip_leading_rows=1,  # Skip header row
+                write_disposition="WRITE_APPEND",  # Append data
+                autodetect=True,
+            )
+            load_job = bq_client.load_table_from_file(
+                csv_file, BQ_TABLE, job_config=job_config
+            )
+            load_job.result()  # Wait for the job to complete
+            log_message(f"Data successfully loaded to BigQuery from {CSV_FILE_PATH}.")
+    except Exception as e:
+        log_message(f"Error loading data to BigQuery: {e}")
+
+# Ensure dataset and table exist in BigQuery
 ensure_dataset_exists()
 ensure_table_exists()
 
-# Process symbols
+# Process each symbol
 for symbol in symbols:
     fetch_and_update_stock_data(symbol)
-    time.sleep(1)  # Avoid rate limiting
 
-# Save Excel file
-workbook.save(EXCEL_FILE_PATH)
-log_message(f"Excel data saved to {EXCEL_FILE_PATH}.")
-log_message("All symbols processed.")
+# Load the data into BigQuery from the CSV file
+load_data_to_bigquery()
+
+log_message("Script execution completed.")
