@@ -91,7 +91,7 @@ headers = [
 
 # Add "Previous Day Date" to headers
 PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d')
-headers_with_date = ["PreviousDayDate", "Symbol"] + headers
+headers_with_date = ["PreviousDayDate", "Symbol_Input"] + headers
 
 def ensure_dataset_exists():
     try:
