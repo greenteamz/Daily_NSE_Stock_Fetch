@@ -109,7 +109,7 @@ def ensure_table_exists():
         log_message(f"Table '{BQ_TABLE}' already exists.")
     except NotFound:
         # Table does not exist, create it
-        schema = [bigquery.SchemaField("Symbol", "STRING")] + [
+        schema = [bigquery.SchemaField("Symbol_Input", "STRING")] + [
             bigquery.SchemaField(header, "STRING") for header in headers
         ] + [bigquery.SchemaField("ExecutionDate", "DATE")]
 
