@@ -11,3 +11,5 @@ bs4
 requests
 pytz
 openpyxl
+google-cloud-bigquery
+google-auth
