@@ -295,11 +295,17 @@ def preprocess_data(csv_file_path):
                         elif expected_type == "FLOAT":
                             processed_row[key] = float(value) if value else None
                         elif expected_type == "DATE":
-                            processed_row[key] = (
-                                datetime.strptime(value, "%Y-%m-%d").date()
-                                if value
-                                else None
-                            )
+                            try:
+                                # Check if value is a Unix timestamp and convert it
+                                if value.isdigit():
+                                    processed_row[key] = datetime.fromtimestamp(int(value)).date()
+                                else:
+                                    # Parse date string in the format "YYYY-MM-DD"
+                                    processed_row[key] = datetime.strptime(value, "%Y-%m-%d").date()
+                            except Exception:
+                                # Handle invalid or missing date values with a default date
+                                processed_row[key] = datetime(1990, 1, 1).date()
+
                         else:  # STRING
                             processed_row[key] = value
                     except ValueError as ve:
@@ -335,7 +341,8 @@ def load_data_to_bigquery():
                 source_format=bigquery.SourceFormat.CSV,
                 skip_leading_rows=1,  # Skip header row
                 write_disposition="WRITE_APPEND",  # Append data
-                autodetect=True,
+                schema=schema,
+                autodetect=False,
             )
             load_job = bq_client.load_table_from_file(
                 csv_file, BQ_TABLE, job_config=job_config
