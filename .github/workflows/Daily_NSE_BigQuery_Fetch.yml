@@ -46,7 +46,7 @@ jobs:
       run: |
         DAY_OF_WEEK=$(date +%u) # 1=Monday, 7=Sunday
         if [[ "$DAY_OF_WEEK" -eq 1 || "$DAY_OF_WEEK" -eq 7 ]]; then
-          echo "continue=false" >> $GITHUB_ENV
+          echo "continue=true" >> $GITHUB_ENV
         else
           echo "continue=true" >> $GITHUB_ENV
         fi
