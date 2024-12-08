@@ -207,7 +207,7 @@ initialize_row_counter()
 
 # Add "Previous Day Date" to headers
 # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d')
-PREVIOUS_DAY_DATETIME = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
+PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
 headers_with_date = ["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers
 
 def ensure_dataset_exists():
@@ -297,7 +297,7 @@ def fetch_and_update_stock_data(symbol):
         current_counter = get_current_row_counter()
         
         # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
-        PREVIOUS_DAY_DATETIME = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
+        PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
         info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]
 
