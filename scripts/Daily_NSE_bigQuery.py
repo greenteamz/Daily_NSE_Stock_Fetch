@@ -188,7 +188,8 @@ data_type_map = {
 
 
 # Add "Previous Day Date" to headers
-PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d')
+# PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d')
+PREVIOUS_DAY_DATETIME = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
 headers_with_date = ["PreviousDayDate", "Symbol_Input"] + headers
 
 def ensure_dataset_exists():
@@ -208,12 +209,12 @@ def ensure_table_exists():
     except NotFound:
         # Table does not exist, create it
         # Build the schema dynamically
-        schema = [bigquery.SchemaField("PreviousDayDate", "DATE"), bigquery.SchemaField("Symbol_Input", "STRING"),] + [
+        schema = [bigquery.SchemaField("PreviousDayDate", "DATETIME"), bigquery.SchemaField("Symbol_Input", "STRING"),] + [
                 bigquery.SchemaField(header, data_type_map.get(header, "STRING"))
                 for header in headers
                 ]
         
-        #schema = [bigquery.SchemaField("PreviousDayDate", "DATE"), bigquery.SchemaField("Symbol_Input", "STRING")] + [
+        #schema = [bigquery.SchemaField("PreviousDayDate", "DATETIME"), bigquery.SchemaField("Symbol_Input", "STRING")] + [
         #    bigquery.SchemaField(header, "STRING") for header in headers
         #]
 
@@ -274,9 +275,10 @@ def fetch_and_update_stock_data(symbol):
         stock = yf.Ticker(symbol)
         info = stock.info
 
-        PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
+        # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
+        PREVIOUS_DAY_DATETIME = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
-        info_row = [PREVIOUS_DAY_DATE, symbol] + [info.get(key, '') for key in headers]
+        info_row = [PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]
 
         # Append data to CSV and Excel
         append_to_csv(info_row)
@@ -308,6 +310,12 @@ def preprocess_data(csv_file_path):
                             processed_row[key] = int(value) if value else None
                         elif expected_type == "FLOAT":
                             processed_row[key] = float(value) if value else None
+                        elif expected_type == "DATETIME":
+                            processed_row[key] = (
+                                datetime.strptime(value, "%Y-%m-%d %H:%M:%S") 
+                                if value 
+                                else datetime(1990, 1, 1, 0, 0, 0)  # Default to '1990-01-01 00:00:00' if no value is provided
+                            )
                         elif expected_type == "DATE":
                             try:
                                 # Check if value is a Unix timestamp and convert it
