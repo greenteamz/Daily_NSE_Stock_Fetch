@@ -1,0 +1,81 @@
+[2024-12-08 15:05:55] Created dataset 'nse_stock_test2'.
+[2024-12-08 15:05:55] Created table 'stockautomation-442015.nse_stock_test2.daily_nse_stock_data'.
+[2024-12-08 15:05:55] Fetching data for RELIANCE.NS...
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:56] Header added to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:56] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:56] Fetching data for TCS.NS...
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:56] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:56] Fetching data for HDFCBANK.NS...
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:56] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:56] Fetching data for BHARTIARTL.NS...
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:56] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:56] Fetching data for ICICIBANK.NS...
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:56] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:56] Fetching data for INFY.NS...
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:56] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:57] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:57] Fetching data for SBIN.NS...
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:57] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:57] Fetching data for ITC.NS...
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:57] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:57] Fetching data for HINDUNILVR.NS...
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:57] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:57] Fetching data for LICI.NS...
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:57] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:57] Fetching data for HDFC.NS...
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:57] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:57] Fetching data for HCLTECH.NS...
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:57] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:58] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:58] Fetching data for LT.NS...
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:58] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:58] Fetching data for SUNPHARMA.NS...
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:58] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:58] Fetching data for BAJFINANCE.NS...
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:58] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:58] Fetching data for TATAMTRDVR.NS...
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:58] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:58] Fetching data for NTPC.NS...
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:58] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:58] Fetching data for AXISBANK.NS...
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:58] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:59] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:05:59] Fetching data for MARUTI.NS...
+[2024-12-08 15:05:59] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 15:05:59] Appended data to CSV file: csv/NSE_Stock_2024-12-08_15-05-48.csv
+[2024-12-08 15:05:59] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 15:06:04] Data successfully loaded to BigQuery from temp_processed.csv.
+[2024-12-08 15:06:04] Script execution completed.
