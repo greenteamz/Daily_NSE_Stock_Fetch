@@ -70,7 +70,7 @@ symbols = [symbol if symbol.endswith('.NS') else f"{symbol}.NS" for symbol in sy
 
 # Define BigQuery dataset and table with the project ID
 PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
-BQ_DATASET = "nse_stock_test2"  # Replace with your dataset name
+BQ_DATASET = "nse_stock_test_row"  # Replace with your dataset name
 BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_data"  # Fully-qualified table name
 
 # Define schema for BigQuery table
@@ -185,12 +185,30 @@ data_type_map = {
     "operatingMargins": "FLOAT",
 }
 
+ROW_COUNTER_FILE = "master/row_counter.txt"
+
+# Initialize row_insert_order
+def initialize_row_counter():
+    if not os.path.exists(ROW_COUNTER_FILE):
+        with open(ROW_COUNTER_FILE, "w") as f:
+            f.write("1")  # Start counter at 0
+
+def get_current_row_counter():
+    with open(ROW_COUNTER_FILE, "r") as f:
+        return int(f.read().strip())
+
+def update_row_counter(new_value):
+    with open(ROW_COUNTER_FILE, "w") as f:
+        f.write(str(new_value))
+
+# Initialize the row counter if not already done
+initialize_row_counter()
 
 
 # Add "Previous Day Date" to headers
 # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d')
 PREVIOUS_DAY_DATETIME = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
-headers_with_date = ["PreviousDayDate", "Symbol_Input"] + headers
+headers_with_date = ["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers
 
 def ensure_dataset_exists():
     try:
@@ -209,7 +227,7 @@ def ensure_table_exists():
     except NotFound:
         # Table does not exist, create it
         # Build the schema dynamically
-        schema = [bigquery.SchemaField("PreviousDayDate", "DATETIME"), bigquery.SchemaField("Symbol_Input", "STRING"),] + [
+        schema = [bigquery.SchemaField("row_insert_order", "INTEGER"), bigquery.SchemaField("PreviousDayDate", "DATETIME"), bigquery.SchemaField("Symbol_Input", "STRING"),] + [
                 bigquery.SchemaField(header, data_type_map.get(header, "STRING"))
                 for header in headers
                 ]
@@ -231,7 +249,7 @@ def append_to_csv(data_row):
     with open(MASTER_CSV_FILE_PATH, mode="a", newline="") as csv_file:
         writer = csv.writer(csv_file)
         if write_header:
-            writer.writerow(["PreviousDayDate", "Symbol_Input"] + headers)  # Add header row
+            writer.writerow(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers)  # Add header row
             log_message(f"Header added to CSV file: {MASTER_CSV_FILE_PATH}")
         writer.writerow(data_row)
         log_message(f"Appended data to CSV file: {MASTER_CSV_FILE_PATH}")
@@ -242,7 +260,7 @@ def append_to_csv(data_row):
     with open(Daily_CSV_FILE_PATH, mode="a", newline="") as csv_file:
         writer = csv.writer(csv_file)
         if write_header:
-            writer.writerow(["PreviousDayDate", "Symbol_Input"] + headers)  # Add header row
+            writer.writerow(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers)  # Add header row
             log_message(f"Header added to CSV file: {Daily_CSV_FILE_PATH}")
         writer.writerow(data_row)
         log_message(f"Appended data to CSV file: {Daily_CSV_FILE_PATH}")
@@ -259,7 +277,7 @@ def append_to_excel(data_row):
         if sheet_name not in workbook.sheetnames:
             workbook.create_sheet(sheet_name)
             sheet = workbook[sheet_name]
-            sheet.append(["PreviousDayDate", "Symbol_Input"] + headers)  # Add header
+            sheet.append(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers)  # Add header
         else:
             sheet = workbook[sheet_name]
 
@@ -275,11 +293,18 @@ def fetch_and_update_stock_data(symbol):
         stock = yf.Ticker(symbol)
         info = stock.info
 
+        # Read the current row counter
+        current_counter = get_current_row_counter()
+        
         # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         PREVIOUS_DAY_DATETIME = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
-        info_row = [PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]
+        info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]
 
+        # Increment row_insert_order for the next row
+        current_counter += 1
+        update_row_counter(current_counter)
+        
         # Append data to CSV and Excel
         append_to_csv(info_row)
         append_to_excel(info_row)
