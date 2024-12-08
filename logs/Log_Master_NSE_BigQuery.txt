@@ -48,3 +48,22 @@ Field 'lastDividendDate' with value '1723420800' failed type conversion to DATE:
 [2024-12-08 10:04:06] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
 [2024-12-08 10:04:06] Error loading data to BigQuery: name 'schema' is not defined
 [2024-12-08 10:04:06] Script execution completed.
+[2024-12-08 10:07:07] Dataset 'nse_stock_test' exists.
+[2024-12-08 10:07:07] Table 'stockautomation-442015.nse_stock_test.daily_nse_stock_data' already exists.
+[2024-12-08 10:07:07] Fetching data for RELIANCE.NS...
+[2024-12-08 10:07:07] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 10:07:07] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 10:07:07] Fetching data for TCS.NS...
+[2024-12-08 10:07:07] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 10:07:07] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 10:07:07] Fetching data for HDFCBANK.NS...
+[2024-12-08 10:07:07] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 10:07:07] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 10:07:07] Fetching data for BHARTIARTL.NS...
+[2024-12-08 10:07:08] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 10:07:08] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 10:07:08] Fetching data for ICICIBANK.NS...
+[2024-12-08 10:07:08] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 10:07:08] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 10:07:14] Data successfully loaded to BigQuery from temp_processed.csv.
+[2024-12-08 10:07:14] Script execution completed.
