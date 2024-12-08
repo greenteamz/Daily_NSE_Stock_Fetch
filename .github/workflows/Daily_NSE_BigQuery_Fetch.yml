@@ -63,8 +63,8 @@ jobs:
       env:
         GH_PAT: ${{ secrets.GH_PAT }}
       run: |
-        git remote set-url origin https://x-access-token:${GH_PAT}@github.com/aravinthkumarj1/daily_stock_update.git
+        git remote set-url origin https://x-access-token:${GH_PAT}@github.com/greenteamz/Daily_NSE_Stock_Fetch.git
         git status
-        git add logs/* csv/* master/*
+        git add logs/* csv/* master/* excel/*
         git commit -m "$(date) NSE Daily update"
         git push origin main
