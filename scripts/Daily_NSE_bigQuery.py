@@ -20,16 +20,18 @@ ist_now = datetime.now(IST)
 # Extract the date part from IST datetime
 ist_date = ist_now.date()
 
-# Generate log and CSV file names
+# Generate log and CSV file names 
 log_filename = f"log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
 master_log_filename = f"Log_Master_NSE_BigQuery.txt"
 csv_filename = f"NSE_Stock_Master_BQ.csv"  # Append data for the same day
+csv_filename_daily = f"NSE_Stock_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv"  # Append data for the same day
 excel_filename = f"NSE_Stock_Master_DataLake.xlsx"  # Excel file for today
 
 # Paths for logs, CSV, and Excel
 MASTER_LOG_FILE_PATH = os.path.join("logs", master_log_filename)
 LOG_FILE_PATH = os.path.join("logs", log_filename)
-CSV_FILE_PATH = os.path.join("csv", csv_filename)
+MASTER_CSV_FILE_PATH = os.path.join("csv", csv_filename)
+Daily_CSV_FILE_PATH = os.path.join("csv", csv_filename_daily)
 EXCEL_FILE_PATH = os.path.join("excel", excel_filename)
 
 # Ensure directories exist
@@ -68,7 +70,7 @@ symbols = [symbol if symbol.endswith('.NS') else f"{symbol}.NS" for symbol in sy
 
 # Define BigQuery dataset and table with the project ID
 PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
-BQ_DATASET = "nse_stock_test"  # Replace with your dataset name
+BQ_DATASET = "nse_stock_test1"  # Replace with your dataset name
 BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_data"  # Fully-qualified table name
 
 # Define schema for BigQuery table
@@ -223,15 +225,26 @@ def ensure_table_exists():
 
 def append_to_csv(data_row):
     """Append a row of data to the CSV file, adding the header only if it's a new file."""
-    write_header = not os.path.exists(CSV_FILE_PATH)  # Check if file exists
+    write_header = not os.path.exists(MASTER_CSV_FILE_PATH)  # Check if file exists
 
-    with open(CSV_FILE_PATH, mode="a", newline="") as csv_file:
+    with open(MASTER_CSV_FILE_PATH, mode="a", newline="") as csv_file:
         writer = csv.writer(csv_file)
         if write_header:
             writer.writerow(["PreviousDayDate", "Symbol_Input"] + headers)  # Add header row
-            log_message(f"Header added to CSV file: {CSV_FILE_PATH}")
+            log_message(f"Header added to CSV file: {MASTER_CSV_FILE_PATH}")
         writer.writerow(data_row)
-        log_message(f"Appended data to CSV file: {CSV_FILE_PATH}")
+        log_message(f"Appended data to CSV file: {MASTER_CSV_FILE_PATH}")
+
+    """Append a row of data to the CSV file, adding the header only if it's a new file."""
+    write_header = not os.path.exists(Daily_CSV_FILE_PATH)  # Check if file exists
+
+    with open(Daily_CSV_FILE_PATH, mode="a", newline="") as csv_file:
+        writer = csv.writer(csv_file)
+        if write_header:
+            writer.writerow(["PreviousDayDate", "Symbol_Input"] + headers)  # Add header row
+            log_message(f"Header added to CSV file: {Daily_CSV_FILE_PATH}")
+        writer.writerow(data_row)
+        log_message(f"Appended data to CSV file: {Daily_CSV_FILE_PATH}")
 
 def append_to_excel(data_row):
     """Append data to an Excel sheet, creating a new sheet for the day."""
@@ -261,6 +274,7 @@ def fetch_and_update_stock_data(symbol):
         stock = yf.Ticker(symbol)
         info = stock.info
 
+        PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
         info_row = [PREVIOUS_DAY_DATE, symbol] + [info.get(key, '') for key in headers]
 
@@ -326,7 +340,7 @@ def preprocess_data(csv_file_path):
 def load_data_to_bigquery():
     """Load data from the preprocessed CSV file into BigQuery."""
     try:
-        processed_data = preprocess_data(CSV_FILE_PATH)
+        processed_data = preprocess_data(Daily_CSV_FILE_PATH)
         
         # Write processed data back to a temporary CSV for BigQuery loading
         temp_csv_path = "temp_processed.csv"
