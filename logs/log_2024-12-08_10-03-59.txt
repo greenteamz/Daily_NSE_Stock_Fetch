@@ -1,0 +1,19 @@
+[2024-12-08 10:04:05] Dataset 'nse_stock_test' exists.
+[2024-12-08 10:04:05] Table 'stockautomation-442015.nse_stock_test.daily_nse_stock_data' already exists.
+[2024-12-08 10:04:05] Fetching data for RELIANCE.NS...
+[2024-12-08 10:04:06] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 10:04:06] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 10:04:06] Fetching data for TCS.NS...
+[2024-12-08 10:04:06] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 10:04:06] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 10:04:06] Fetching data for HDFCBANK.NS...
+[2024-12-08 10:04:06] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 10:04:06] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 10:04:06] Fetching data for BHARTIARTL.NS...
+[2024-12-08 10:04:06] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 10:04:06] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 10:04:06] Fetching data for ICICIBANK.NS...
+[2024-12-08 10:04:06] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 10:04:06] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 10:04:06] Error loading data to BigQuery: name 'schema' is not defined
+[2024-12-08 10:04:06] Script execution completed.
