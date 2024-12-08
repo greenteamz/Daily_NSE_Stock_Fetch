@@ -58,7 +58,8 @@ bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
 
 # Open Google Spreadsheet
 spreadsheet = gc.open('NSE_symbol')  # Replace with your Google Sheet name
-source_worksheet = spreadsheet.worksheet('symbol')  # Replace with your sheet name
+#source_worksheet = spreadsheet.worksheet('symbol')  # Replace with your sheet name
+source_worksheet = spreadsheet.worksheet('symbol_test')  # Test sheet name
 
 # Fetch all stock symbols from the first column
 symbols = source_worksheet.col_values(1)[1:]  # Skip header row
@@ -92,6 +93,97 @@ headers = [
     "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins"
 ]
 
+# Define a data type mapping for headers
+data_type_map = {
+    "industry": "STRING",
+    "sector": "STRING",
+    "fullTimeEmployees": "INTEGER",  # Integer field
+    "auditRisk": "FLOAT",
+    "boardRisk": "FLOAT",
+    "compensationRisk": "FLOAT",
+    "shareHolderRightsRisk": "FLOAT",
+    "overallRisk": "FLOAT",
+    "maxAge": "INTEGER",
+    "priceHint": "INTEGER",
+    "previousClose": "FLOAT",
+    "open": "FLOAT",
+    "dayLow": "FLOAT",
+    "dayHigh": "FLOAT",
+    "regularMarketPreviousClose": "FLOAT",
+    "regularMarketOpen": "FLOAT",
+    "regularMarketDayLow": "FLOAT",
+    "regularMarketDayHigh": "FLOAT",
+    "dividendRate": "FLOAT",
+    "dividendYield": "FLOAT",
+    "exDividendDate": "DATE",
+    "payoutRatio": "FLOAT",
+    "fiveYearAvgDividendYield": "FLOAT",
+    "beta": "FLOAT",
+    "trailingPE": "FLOAT",
+    "forwardPE": "FLOAT",
+    "volume": "INTEGER",
+    "regularMarketVolume": "INTEGER",
+    "averageVolume": "INTEGER",
+    "averageVolume10days": "INTEGER",
+    "averageDailyVolume10Day": "INTEGER",
+    "marketCap": "INTEGER",
+    "fiftyTwoWeekLow": "FLOAT",
+    "fiftyTwoWeekHigh": "FLOAT",
+    "priceToSalesTrailing12Months": "FLOAT",
+    "fiftyDayAverage": "FLOAT",
+    "twoHundredDayAverage": "FLOAT",
+    "trailingAnnualDividendRate": "FLOAT",
+    "trailingAnnualDividendYield": "FLOAT",
+    "enterpriseValue": "INTEGER",
+    "profitMargins": "FLOAT",
+    "floatShares": "INTEGER",
+    "sharesOutstanding": "INTEGER",
+    "heldPercentInsiders": "FLOAT",
+    "heldPercentInstitutions": "FLOAT",
+    "impliedSharesOutstanding": "INTEGER",
+    "bookValue": "FLOAT",
+    "priceToBook": "FLOAT",
+    "earningsQuarterlyGrowth": "FLOAT",
+    "trailingEps": "FLOAT",
+    "forwardEps": "FLOAT",
+    "52WeekChange": "FLOAT",
+    "lastDividendValue": "FLOAT",
+    "lastDividendDate": "DATE",
+    "exchange": "STRING",
+    "quoteType": "STRING",
+    "symbol": "STRING",
+    "shortName": "STRING",
+    "longName": "STRING",
+    "currentPrice": "FLOAT",
+    "targetHighPrice": "FLOAT",
+    "targetLowPrice": "FLOAT",
+    "targetMeanPrice": "FLOAT",
+    "targetMedianPrice": "FLOAT",
+    "recommendationMean": "FLOAT",
+    "recommendationKey": "STRING",
+    "numberOfAnalystOpinions": "INTEGER",
+    "totalCash": "INTEGER",
+    "totalCashPerShare": "FLOAT",
+    "ebitda": "INTEGER",
+    "totalDebt": "INTEGER",
+    "quickRatio": "FLOAT",
+    "currentRatio": "FLOAT",
+    "totalRevenue": "INTEGER",
+    "debtToEquity": "FLOAT",
+    "revenuePerShare": "FLOAT",
+    "returnOnAssets": "FLOAT",
+    "returnOnEquity": "FLOAT",
+    "freeCashflow": "INTEGER",
+    "operatingCashflow": "INTEGER",
+    "earningsGrowth": "FLOAT",
+    "revenueGrowth": "FLOAT",
+    "grossMargins": "FLOAT",
+    "ebitdaMargins": "FLOAT",
+    "operatingMargins": "FLOAT",
+}
+
+
+
 # Add "Previous Day Date" to headers
 PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d')
 headers_with_date = ["PreviousDayDate", "Symbol_Input"] + headers
@@ -112,9 +204,15 @@ def ensure_table_exists():
         log_message(f"Table '{BQ_TABLE}' already exists.")
     except NotFound:
         # Table does not exist, create it
-        schema = [bigquery.SchemaField("PreviousDayDate", "DATE"), bigquery.SchemaField("Symbol_Input", "STRING")] + [
-            bigquery.SchemaField(header, "STRING") for header in headers
-        ]
+        # Build the schema dynamically
+        schema = [bigquery.SchemaField("PreviousDayDate", "DATE"), bigquery.SchemaField("Symbol_Input", "STRING"),] + [
+                bigquery.SchemaField(header, data_type_map.get(header, "STRING"))
+                for header in headers
+                ]
+        
+        #schema = [bigquery.SchemaField("PreviousDayDate", "DATE"), bigquery.SchemaField("Symbol_Input", "STRING")] + [
+        #    bigquery.SchemaField(header, "STRING") for header in headers
+        #]
 
         table = bigquery.Table(BQ_TABLE, schema=schema)
         bq_client.create_table(table)
@@ -173,6 +271,81 @@ def fetch_and_update_stock_data(symbol):
         log_message(f"Error fetching data for {symbol}: {e}")
         return None
 
+# Add process data
+def preprocess_data(csv_file_path):
+    """
+    Preprocess the CSV file to ensure data types are correct based on the BigQuery schema.
+    If incorrect types are detected, log the error and attempt to fix them.
+    """
+
+    processed_rows = []
+    errors = []
+
+    try:
+        with open(csv_file_path, "r") as csv_file:
+            reader = csv.DictReader(csv_file)
+            for row in reader:
+                processed_row = {}
+                for key, value in row.items():
+                    expected_type = data_type_map.get(key, "STRING")
+                    try:
+                        if expected_type == "INTEGER":
+                            processed_row[key] = int(value) if value else None
+                        elif expected_type == "FLOAT":
+                            processed_row[key] = float(value) if value else None
+                        elif expected_type == "DATE":
+                            processed_row[key] = (
+                                datetime.strptime(value, "%Y-%m-%d").date()
+                                if value
+                                else None
+                            )
+                        else:  # STRING
+                            processed_row[key] = value
+                    except ValueError as ve:
+                        errors.append(
+                            f"Field '{key}' with value '{value}' failed type conversion to {expected_type}: {ve}"
+                        )
+                        processed_row[key] = None  # Set to None on error
+                processed_rows.append(processed_row)
+    except Exception as e:
+        log_message(f"Error reading or processing CSV file: {e}")
+    
+    # Log errors, if any
+    if errors:
+        log_message(f"Data type errors detected during preprocessing:\n" + "\n".join(errors))
+    
+    return processed_rows
+
+def load_data_to_bigquery():
+    """Load data from the preprocessed CSV file into BigQuery."""
+    try:
+        processed_data = preprocess_data(CSV_FILE_PATH)
+        
+        # Write processed data back to a temporary CSV for BigQuery loading
+        temp_csv_path = "temp_processed.csv"
+        with open(temp_csv_path, "w", newline="") as temp_csv:
+            writer = csv.DictWriter(temp_csv, fieldnames=processed_data[0].keys())
+            writer.writeheader()  # Write headers
+            writer.writerows(processed_data)  # Write processed rows
+        
+        # Load the processed data into BigQuery
+        with open(temp_csv_path, "rb") as csv_file:
+            job_config = bigquery.LoadJobConfig(
+                source_format=bigquery.SourceFormat.CSV,
+                skip_leading_rows=1,  # Skip header row
+                write_disposition="WRITE_APPEND",  # Append data
+                autodetect=True,
+            )
+            load_job = bq_client.load_table_from_file(
+                csv_file, BQ_TABLE, job_config=job_config
+            )
+            load_job.result()  # Wait for the job to complete
+            log_message(f"Data successfully loaded to BigQuery from {temp_csv_path}.")
+    except Exception as e:
+        log_message(f"Error loading data to BigQuery: {e}")
+
+### Disable this Query #### 
+'''
 def load_data_to_bigquery():
     """Load data from the CSV file into BigQuery."""
     try:
@@ -190,6 +363,8 @@ def load_data_to_bigquery():
             log_message(f"Data successfully loaded to BigQuery from {CSV_FILE_PATH}.")
     except Exception as e:
         log_message(f"Error loading data to BigQuery: {e}")
+'''
+
 
 # Ensure dataset and table exist in BigQuery
 ensure_dataset_exists()
