@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import gspread
 from google.oauth2.service_account import Credentials
 from google.cloud import bigquery
+from google.api_core.exceptions import NotFound
 from openpyxl import Workbook, load_workbook
 import csv
 import os
