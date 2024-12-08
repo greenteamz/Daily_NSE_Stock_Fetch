@@ -1,0 +1,81 @@
+[2024-12-08 14:56:51] Dataset 'nse_stock_test1' exists.
+[2024-12-08 14:56:52] Table 'stockautomation-442015.nse_stock_test1.daily_nse_stock_data' already exists.
+[2024-12-08 14:56:52] Fetching data for RELIANCE.NS...
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:52] Header added to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:52] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:52] Fetching data for TCS.NS...
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:52] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:52] Fetching data for HDFCBANK.NS...
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:52] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:52] Fetching data for BHARTIARTL.NS...
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:52] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:52] Fetching data for ICICIBANK.NS...
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:52] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:52] Fetching data for INFY.NS...
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:52] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:52] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:52] Fetching data for SBIN.NS...
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:53] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:53] Fetching data for ITC.NS...
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:53] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:53] Fetching data for HINDUNILVR.NS...
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:53] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:53] Fetching data for LICI.NS...
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:53] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:53] Fetching data for HDFC.NS...
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:53] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:53] Fetching data for HCLTECH.NS...
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:53] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:53] Fetching data for LT.NS...
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:53] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:53] Fetching data for SUNPHARMA.NS...
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:53] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:54] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:54] Fetching data for BAJFINANCE.NS...
+[2024-12-08 14:56:54] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:54] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:54] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:54] Fetching data for TATAMTRDVR.NS...
+[2024-12-08 14:56:54] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:54] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:54] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:54] Fetching data for NTPC.NS...
+[2024-12-08 14:56:54] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:54] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:54] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:54] Fetching data for AXISBANK.NS...
+[2024-12-08 14:56:54] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:54] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:54] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:54] Fetching data for MARUTI.NS...
+[2024-12-08 14:56:54] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 14:56:54] Appended data to CSV file: csv/NSE_Stock_2024-12-08_14-56-50.csv
+[2024-12-08 14:56:54] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 14:56:56] Error loading data to BigQuery: 400 Error while reading data, error message: CSV processing encountered too many errors, giving up. Rows: 19; errors: 19; max bad: 0; error percent: 0; reason: invalid, message: Error while reading data, error message: CSV processing encountered too many errors, giving up. Rows: 19; errors: 19; max bad: 0; error percent: 0; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 2 byte_offset_to_start_of_line: 1301 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 3 byte_offset_to_start_of_line: 2084 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 4 byte_offset_to_start_of_line: 2866 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 5 byte_offset_to_start_of_line: 3541 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 6 byte_offset_to_start_of_line: 4292 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 7 byte_offset_to_start_of_line: 4985 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 8 byte_offset_to_start_of_line: 5716 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 9 byte_offset_to_start_of_line: 6411 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 10 byte_offset_to_start_of_line: 7101 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 11 byte_offset_to_start_of_line: 7882 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 12 byte_offset_to_start_of_line: 8543 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 13 byte_offset_to_start_of_line: 8693 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 14 byte_offset_to_start_of_line: 9442 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 15 byte_offset_to_start_of_line: 10216 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 16 byte_offset_to_start_of_line: 10996 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 17 byte_offset_to_start_of_line: 11718 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 18 byte_offset_to_start_of_line: 12357 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 19 byte_offset_to_start_of_line: 13101 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 20 byte_offset_to_start_of_line: 13795 column_index: 0 column_name: "PreviousDayDate" column_type: DATE value: "2024-12-07 00:00:00"
+[2024-12-08 14:56:56] Script execution completed.
