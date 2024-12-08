@@ -1,0 +1,31 @@
+[2024-12-08 09:47:51] Created dataset 'nse_stock_test'.
+[2024-12-08 09:47:52] Created table 'stockautomation-442015.nse_stock_test.daily_nse_stock_data'.
+[2024-12-08 09:47:52] Fetching data for RELIANCE.NS...
+[2024-12-08 09:47:52] Header added to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 09:47:52] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 09:47:52] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 09:47:52] Fetching data for TCS.NS...
+[2024-12-08 09:47:52] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 09:47:52] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 09:47:52] Fetching data for HDFCBANK.NS...
+[2024-12-08 09:47:52] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 09:47:52] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 09:47:52] Fetching data for BHARTIARTL.NS...
+[2024-12-08 09:47:53] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 09:47:53] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 09:47:53] Fetching data for ICICIBANK.NS...
+[2024-12-08 09:47:53] Appended data to CSV file: csv/NSE_Stock_Master_BQ.csv
+[2024-12-08 09:47:53] Data appended to Excel file: excel/NSE_Stock_Master_DataLake.xlsx
+[2024-12-08 09:47:53] Data type errors detected during preprocessing:
+Field 'exDividendDate' with value '1724025600' failed type conversion to DATE: time data '1724025600' does not match format '%Y-%m-%d'
+Field 'lastDividendDate' with value '1724025600' failed type conversion to DATE: time data '1724025600' does not match format '%Y-%m-%d'
+Field 'exDividendDate' with value '1729209600' failed type conversion to DATE: time data '1729209600' does not match format '%Y-%m-%d'
+Field 'lastDividendDate' with value '1729209600' failed type conversion to DATE: time data '1729209600' does not match format '%Y-%m-%d'
+Field 'exDividendDate' with value '1715299200' failed type conversion to DATE: time data '1715299200' does not match format '%Y-%m-%d'
+Field 'lastDividendDate' with value '1715299200' failed type conversion to DATE: time data '1715299200' does not match format '%Y-%m-%d'
+Field 'exDividendDate' with value '1722988800' failed type conversion to DATE: time data '1722988800' does not match format '%Y-%m-%d'
+Field 'lastDividendDate' with value '1722988800' failed type conversion to DATE: time data '1722988800' does not match format '%Y-%m-%d'
+Field 'exDividendDate' with value '1723420800' failed type conversion to DATE: time data '1723420800' does not match format '%Y-%m-%d'
+Field 'lastDividendDate' with value '1723420800' failed type conversion to DATE: time data '1723420800' does not match format '%Y-%m-%d'
+[2024-12-08 09:47:55] Error loading data to BigQuery: 400 Provided Schema does not match Table stockautomation-442015:nse_stock_test.daily_nse_stock_data. Field exDividendDate has changed type from DATE to STRING; reason: invalid, message: Provided Schema does not match Table stockautomation-442015:nse_stock_test.daily_nse_stock_data. Field exDividendDate has changed type from DATE to STRING; reason: invalid, message: It looks like you are appending to an existing table with autodetect enabled. Disabling autodetect may resolve this.
+[2024-12-08 09:47:55] Script execution completed.
