@@ -22,10 +22,10 @@ ist_date = ist_now.date()
 
 # Generate log and CSV file names 
 log_filename = f"log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.txt"
-master_log_filename = f"Log_Master_NSE_BigQuery.txt"
-csv_filename = f"NSE_Stock_Master_BQ.csv"  # Append data for the same day
-csv_filename_daily = f"NSE_Stock_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv"  # Append data for the same day
-excel_filename = f"NSE_Stock_Master_DataLake.xlsx"  # Excel file for today
+master_log_filename = f"Log_Master_NSE_BigQuery_test_dump.txt"
+csv_filename = f"NSE_Stock_Master_BQ_test_dump.csv"  # Append data for the same day
+csv_filename_daily = f"NSE_Stock_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_test_dump.csv"  # Append data for the same day
+excel_filename = f"NSE_Stock_Master_DataLake_test_dump.xlsx"  # Excel file for today
 
 # Paths for logs, CSV, and Excel
 MASTER_LOG_FILE_PATH = os.path.join("logs", master_log_filename)
@@ -70,8 +70,8 @@ symbols = [symbol if symbol.endswith('.NS') else f"{symbol}.NS" for symbol in sy
 
 # Define BigQuery dataset and table with the project ID
 PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
-BQ_DATASET = "nse_stock_test_row"  # Replace with your dataset name
-BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_data"  # Fully-qualified table name
+BQ_DATASET = "nse_stock_test_dump"  # Replace with your dataset name
+BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_data_test"  # Fully-qualified table name
 
 # Define schema for BigQuery table
 headers = [
