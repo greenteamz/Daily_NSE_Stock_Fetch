@@ -67,4 +67,4 @@ jobs:
         git status
         git add logs/* csv/* master/* excel/*
         git commit -m "$(date) NSE Daily update"
-        git push origin main
+        git push origin main --force
