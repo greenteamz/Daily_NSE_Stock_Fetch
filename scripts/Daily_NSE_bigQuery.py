@@ -56,8 +56,6 @@ SERVICE_ACCOUNT_FILE = "service_account.json"
 # Google Sheets authentication
 gc = gspread.service_account(filename=SERVICE_ACCOUNT_FILE)
 
-# BigQuery authentication
-bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
 
 # Open Google Spreadsheet
 spreadsheet = gc.open('NSE_symbol')  # Replace with your Google Sheet name
@@ -420,13 +418,17 @@ def load_data_to_bigquery():
 '''
 
 
-# Ensure dataset and table exist in BigQuery
-ensure_dataset_exists()
-ensure_table_exists()
 
 # Process each symbol
 for symbol in symbols:
     fetch_and_update_stock_data(symbol)
+
+# BigQuery authentication
+bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
+
+# Ensure dataset and table exist in BigQuery
+ensure_dataset_exists()
+ensure_table_exists()
 
 # Load the data into BigQuery from the CSV file
 load_data_to_bigquery()
