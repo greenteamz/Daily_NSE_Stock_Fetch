@@ -96,6 +96,7 @@ Let me know if you want to refine or expand this logic!
 
 
 
+###### NEW another search
 You're right that key metrics like **P/E ratio, EPS Growth, and Volatility** are not directly available in Yahoo Finance's raw `yfinance` API results. However, we can still build recommendations by using the available fields from Yahoo Finance's data. Here's how:
 
 ### Fields available in `yfinance` and their possible usage:
@@ -216,7 +217,7 @@ This approach should work with at least **80% accuracy** for most stocks, depend
 
 
 
-
+##### NEW search 
 Here's a revised solution that includes **Investment Profiles**, **Recommendations**, and **Reasons** for a structured, three-recommendation approach. The function evaluates the stock data and provides investment advice aligned with different investment strategies.
 
 ---
