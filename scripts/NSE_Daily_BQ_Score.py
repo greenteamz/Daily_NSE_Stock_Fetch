@@ -350,14 +350,22 @@ def fetch_and_update_stock_data(symbol):
         # Read the current row counter
         current_counter = get_current_row_counter()
 
-        
-        
+        # Safely access data with default values
+        pe_ratio = info.get('trailingPE', 'N/A')
+        dividend_yield = info.get('dividendYield', 'N/A')
+        earnings_growth = info.get('earningsQuarterlyGrowth', 'N/A')        
+
+        # Calculate score (assuming the `calculate_individual_scores` function is defined)
+        score = calculate_individual_scores(pe_ratio, dividend_yield, earnings_growth)
+
         # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
         info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]
 
-        info_row["Calculated_Score"] = calculate_individual_scores(info.get('trailingPE', 'N/A'), info.get('dividendYield', 'N/A'), info.get('earningsQuarterlyGrowth', 'N/A'))
+        info_row["Calculated_Score"] = score
+
+        #info_row["Calculated_Score"] = calculate_individual_scores(info.get('trailingPE', 'N/A'), info.get('dividendYield', 'N/A'), info.get('earningsQuarterlyGrowth', 'N/A'))
         #info_row["Calculated_Score"] = calculate_individual_scores(info_row["trailingPE"], info_row["dividendYield"], info_row["earningsQuarterlyGrowth"])
 
         # Increment row_insert_order for the next row
