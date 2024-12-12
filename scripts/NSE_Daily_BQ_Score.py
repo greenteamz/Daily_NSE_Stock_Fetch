@@ -350,13 +350,14 @@ def fetch_and_update_stock_data(symbol):
         # Read the current row counter
         current_counter = get_current_row_counter()
 
-        calculated_score = calculate_individual_scores(info.get('trailingPE', 'N/A'), info.get('dividendYield', 'N/A'), info.get('earningsQuarterlyGrowth', 'N/A'))
+        
         
         # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
-        info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers] + [calculated_score]
+        info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]
 
+        info_row["Calculated_Score"] = calculate_individual_scores(info.get('trailingPE', 'N/A'), info.get('dividendYield', 'N/A'), info.get('earningsQuarterlyGrowth', 'N/A'))
         #info_row["Calculated_Score"] = calculate_individual_scores(info_row["trailingPE"], info_row["dividendYield"], info_row["earningsQuarterlyGrowth"])
 
         # Increment row_insert_order for the next row
