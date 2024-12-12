@@ -91,7 +91,7 @@ headers = [
     "numberOfAnalystOpinions", "totalCash", "totalCashPerShare", "ebitda", "totalDebt",
     "quickRatio", "currentRatio", "totalRevenue", "debtToEquity", "revenuePerShare",
     "returnOnAssets", "returnOnEquity", "freeCashflow", "operatingCashflow",
-    "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins"
+    "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins", "Calculated_Score"
 ]
 
 # Define a data type mapping for headers
@@ -286,7 +286,7 @@ def append_to_excel(data_row):
 def calculate_individual_scores(pe, dividend_yield, earnings_growth):
     #print("calculate_individual_scores")
     dividend_yield = dividend_yield * 100
-    print(pe, dividend_yield, earnings_growth)
+    #print(pe, dividend_yield, earnings_growth)
     # P/E Ratio Scoring Logic (Lower is better)
     if pe is not None:
         if pe <= 10:
@@ -347,7 +347,6 @@ def fetch_and_update_stock_data(symbol):
         stock = yf.Ticker(symbol)
         info = stock.info
 
-        print(info)
         # Read the current row counter
         current_counter = get_current_row_counter()
 
@@ -366,7 +365,7 @@ def fetch_and_update_stock_data(symbol):
         
         # Append data to CSV and Excel
         append_to_csv(info_row)
-        append_to_excel(info_row)
+        #append_to_excel(info_row)
         return info_row
     except Exception as e:
         log_message(f"Error fetching data for {symbol}: {e}")
@@ -463,13 +462,13 @@ for symbol in symbols:
     fetch_and_update_stock_data(symbol)
 
 # BigQuery authentication
-bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
+#bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
 
 # Ensure dataset and table exist in BigQuery
-ensure_dataset_exists()
-ensure_table_exists()
+#ensure_dataset_exists()
+#ensure_table_exists()
 
 # Load the data into BigQuery from the CSV file
-load_data_to_bigquery()
+#load_data_to_bigquery()
 
 log_message("Script execution completed.")
