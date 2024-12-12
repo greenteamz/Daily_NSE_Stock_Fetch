@@ -69,7 +69,7 @@ symbols = [symbol if symbol.endswith('.NS') else f"{symbol}.NS" for symbol in sy
 # Define BigQuery dataset and table with the project ID
 PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
 BQ_DATASET = "nse_stock_test_score"  # Replace with your dataset name
-BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_data_test"  # Fully-qualified table name
+BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_data_test1"  # Fully-qualified table name
 
 # Define schema for BigQuery table
 headers = [
@@ -181,7 +181,6 @@ data_type_map = {
     "grossMargins": "FLOAT",
     "ebitdaMargins": "FLOAT",
     "operatingMargins": "FLOAT",
-    "Calculated_Score": "FLOAT",
 }
 
 ROW_COUNTER_FILE = "master/row_counter.txt"
@@ -229,11 +228,8 @@ def ensure_table_exists():
         schema = [bigquery.SchemaField("row_insert_order", "INTEGER"), bigquery.SchemaField("PreviousDayDate", "DATETIME"), bigquery.SchemaField("Symbol_Input", "STRING"),] + [
                 bigquery.SchemaField(header, data_type_map.get(header, "STRING"))
                 for header in headers
-                ]
+                ] + [bigquery.SchemaField("Calculated_Score", "FLOAT"),]
         
-        #schema = [bigquery.SchemaField("PreviousDayDate", "DATETIME"), bigquery.SchemaField("Symbol_Input", "STRING")] + [
-        #    bigquery.SchemaField(header, "STRING") for header in headers
-        #]
 
         table = bigquery.Table(BQ_TABLE, schema=schema)
         bq_client.create_table(table)
@@ -351,13 +347,14 @@ def fetch_and_update_stock_data(symbol):
         stock = yf.Ticker(symbol)
         info = stock.info
 
+        print(info)
         # Read the current row counter
         current_counter = get_current_row_counter()
         
         # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
-        info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers] +["Calculated_Score"]
+        info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers] + ["Calculated_Score"]
 
         info_row["Calculated_Score"] = calculate_individual_scores(info_row["trailingPE"], info_row["dividendYield"], info_row["earningsQuarterlyGrowth"])
 
