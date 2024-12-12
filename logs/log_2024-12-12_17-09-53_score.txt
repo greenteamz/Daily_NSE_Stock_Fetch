@@ -1,0 +1,16 @@
+[2024-12-12 17:09:54] Fetching data for 360ONE.NS...
+[2024-12-12 17:09:54] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 17:09:54] Header added to CSV file: csv/NSE_Stock_2024-12-12_17-09-53_test_dump_score.csv
+[2024-12-12 17:09:54] Appended data to CSV file: csv/NSE_Stock_2024-12-12_17-09-53_test_dump_score.csv
+[2024-12-12 17:09:54] Fetching data for 5PAISA.NS...
+[2024-12-12 17:09:54] Error fetching data for 5PAISA.NS: '>' not supported between instances of 'str' and 'int'
+[2024-12-12 17:09:54] Fetching data for RELIANCE.NS...
+[2024-12-12 17:09:55] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 17:09:55] Appended data to CSV file: csv/NSE_Stock_2024-12-12_17-09-53_test_dump_score.csv
+[2024-12-12 17:09:55] Fetching data for TCS.NS...
+[2024-12-12 17:09:55] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 17:09:55] Appended data to CSV file: csv/NSE_Stock_2024-12-12_17-09-53_test_dump_score.csv
+[2024-12-12 17:09:55] Fetching data for HDFCBANK.NS...
+[2024-12-12 17:09:55] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 17:09:55] Appended data to CSV file: csv/NSE_Stock_2024-12-12_17-09-53_test_dump_score.csv
+[2024-12-12 17:09:55] Script execution completed.
