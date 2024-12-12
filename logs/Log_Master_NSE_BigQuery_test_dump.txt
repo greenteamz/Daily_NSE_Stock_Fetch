@@ -26793,3 +26793,68 @@
 [2024-12-12 10:31:15] Table 'stockautomation-442015.nse_stock_test_dump.daily_nse_stock_data_test' already exists.
 [2024-12-12 10:31:32] Data successfully loaded to BigQuery from temp_processed.csv.
 [2024-12-12 10:31:32] Script execution completed.
+[2024-12-12 16:10:56] Fetching data for 360ONE.NS...
+[2024-12-12 16:10:56] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:10:56] Header added to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:10:56] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:01] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:01] Fetching data for 3IINFOLTD.NS...
+[2024-12-12 16:11:02] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:02] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:07] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:07] Fetching data for 3MINDIA.NS...
+[2024-12-12 16:11:07] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:07] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:13] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:13] Fetching data for 3PLAND.NS...
+[2024-12-12 16:11:13] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:13] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:18] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:18] Fetching data for 5PAISA.NS...
+[2024-12-12 16:11:18] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:18] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:24] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:24] Fetching data for RELIANCE.NS...
+[2024-12-12 16:11:24] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:24] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:30] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:30] Fetching data for TCS.NS...
+[2024-12-12 16:11:30] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:30] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:35] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:35] Fetching data for HDFCBANK.NS...
+[2024-12-12 16:11:35] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:35] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:41] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:41] Fetching data for BHARTIARTL.NS...
+[2024-12-12 16:11:41] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:41] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:47] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:47] Fetching data for ICICIBANK.NS...
+[2024-12-12 16:11:47] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:47] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:52] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:52] Fetching data for INFY.NS...
+[2024-12-12 16:11:52] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:52] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:11:58] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:11:58] Fetching data for SBIN.NS...
+[2024-12-12 16:11:58] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:11:58] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:12:03] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:12:03] Fetching data for ITC.NS...
+[2024-12-12 16:12:04] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:12:04] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:12:09] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:12:09] Fetching data for HINDUNILVR.NS...
+[2024-12-12 16:12:09] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:12:09] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:12:15] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:12:15] Fetching data for LICI.NS...
+[2024-12-12 16:12:15] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump.csv
+[2024-12-12 16:12:15] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-10-55_test_dump.csv
+[2024-12-12 16:12:20] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump.xlsx
+[2024-12-12 16:12:21] Dataset 'nse_stock_test_dump' exists.
+[2024-12-12 16:12:21] Table 'stockautomation-442015.nse_stock_test_dump.daily_nse_stock_data_test' already exists.
+[2024-12-12 16:12:26] Data successfully loaded to BigQuery from temp_processed.csv.
+[2024-12-12 16:12:26] Script execution completed.
