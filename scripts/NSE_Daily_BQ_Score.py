@@ -91,7 +91,7 @@ headers = [
     "numberOfAnalystOpinions", "totalCash", "totalCashPerShare", "ebitda", "totalDebt",
     "quickRatio", "currentRatio", "totalRevenue", "debtToEquity", "revenuePerShare",
     "returnOnAssets", "returnOnEquity", "freeCashflow", "operatingCashflow",
-    "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins", "Calculated_Score
+    "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins", "Calculated_Score"
 ]
 
 # Define a data type mapping for headers
