@@ -138,3 +138,63 @@
 [2024-12-12 16:08:12] Error reading or processing CSV file: [Errno 2] No such file or directory: 'csv/NSE_Stock_2024-12-12_16-08-05_test_dump_score.csv'
 [2024-12-12 16:08:12] Error loading data to BigQuery: list index out of range
 [2024-12-12 16:08:12] Script execution completed.
+[2024-12-12 16:58:36] Fetching data for 360ONE.NS...
+[2024-12-12 16:58:37] Header added to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:37] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:37] Header added to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:37] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:37] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:37] Fetching data for 3IINFOLTD.NS...
+[2024-12-12 16:58:37] Error fetching data for 3IINFOLTD.NS: '<=' not supported between instances of 'str' and 'int'
+[2024-12-12 16:58:37] Fetching data for 3MINDIA.NS...
+[2024-12-12 16:58:37] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:37] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:37] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:37] Fetching data for 3PLAND.NS...
+[2024-12-12 16:58:37] Error fetching data for 3PLAND.NS: '<=' not supported between instances of 'str' and 'int'
+[2024-12-12 16:58:37] Fetching data for 5PAISA.NS...
+[2024-12-12 16:58:37] Error fetching data for 5PAISA.NS: '>' not supported between instances of 'str' and 'int'
+[2024-12-12 16:58:37] Fetching data for RELIANCE.NS...
+[2024-12-12 16:58:37] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:37] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:37] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:37] Fetching data for TCS.NS...
+[2024-12-12 16:58:37] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:37] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:37] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:37] Fetching data for HDFCBANK.NS...
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:38] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:38] Fetching data for BHARTIARTL.NS...
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:38] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:38] Fetching data for ICICIBANK.NS...
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:38] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:38] Fetching data for INFY.NS...
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:38] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:38] Fetching data for SBIN.NS...
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:38] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:38] Fetching data for ITC.NS...
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:38] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:38] Fetching data for HINDUNILVR.NS...
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:38] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:39] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:39] Fetching data for LICI.NS...
+[2024-12-12 16:58:39] Appended data to CSV file: csv/NSE_Stock_Master_BQ_test_dump_score.csv
+[2024-12-12 16:58:39] Appended data to CSV file: csv/NSE_Stock_2024-12-12_16-58-30_test_dump_score.csv
+[2024-12-12 16:58:39] Data appended to Excel file: excel/NSE_Stock_Master_DataLake_test_dump_score.xlsx
+[2024-12-12 16:58:39] Dataset 'nse_stock_test_score' exists.
+[2024-12-12 16:58:39] Table 'stockautomation-442015.nse_stock_test_score.daily_nse_stock_data_test1' already exists.
+[2024-12-12 16:58:42] Error loading data to BigQuery: 400 Error while reading data, error message: CSV processing encountered too many errors, giving up. Rows: 12; errors: 12; max bad: 0; error percent: 0; reason: invalid, message: Error while reading data, error message: CSV processing encountered too many errors, giving up. Rows: 12; errors: 12; max bad: 0; error percent: 0; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 2 byte_offset_to_start_of_line: 1319 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'1.7\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 3 byte_offset_to_start_of_line: 2044 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'1.3\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 4 byte_offset_to_start_of_line: 2689 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'1.8\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 5 byte_offset_to_start_of_line: 3486 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'1.7\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 6 byte_offset_to_start_of_line: 4280 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'2.4\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 7 byte_offset_to_start_of_line: 4966 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'1.3\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 8 byte_offset_to_start_of_line: 5725 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'2.1\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 9 byte_offset_to_start_of_line: 6435 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'2.3\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 10 byte_offset_to_start_of_line: 7174 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'2.8\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 11 byte_offset_to_start_of_line: 7874 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'3.0\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 12 byte_offset_to_start_of_line: 8581 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'1.3\']"; reason: invalid, message: Error while reading data, error message: Unable to parse; line_number: 13 byte_offset_to_start_of_line: 9382 column_index: 88 column_name: "Calculated_Score" column_type: DOUBLE value: "[\'2.8\']"
+[2024-12-12 16:58:42] Script execution completed.
