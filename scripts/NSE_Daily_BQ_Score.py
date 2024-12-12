@@ -91,7 +91,7 @@ headers = [
     "numberOfAnalystOpinions", "totalCash", "totalCashPerShare", "ebitda", "totalDebt",
     "quickRatio", "currentRatio", "totalRevenue", "debtToEquity", "revenuePerShare",
     "returnOnAssets", "returnOnEquity", "freeCashflow", "operatingCashflow",
-    "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins"
+    "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins", "Calculated_Score
 ]
 
 # Define a data type mapping for headers
@@ -357,9 +357,9 @@ def fetch_and_update_stock_data(symbol):
         # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
-        info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers] + ["Calculated_Score"]
+        info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]
 
-        infor_row["Calculated_Score"] = calculate_individual_scores(infor_row["trailingPE"], infor_row["dividendYield"], infor_row["earningsQuarterlyGrowth"])
+        info_row["Calculated_Score"] = calculate_individual_scores(info_row["trailingPE"], info_row["dividendYield"], info_row["earningsQuarterlyGrowth"])
 
         # Increment row_insert_order for the next row
         current_counter += 1
