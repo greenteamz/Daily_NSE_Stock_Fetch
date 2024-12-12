@@ -10,6 +10,7 @@ import os
 import pytz
 import time
 import logging
+import pandas as pd
 
 # Define IST timezone
 IST = pytz.timezone('Asia/Kolkata')
@@ -91,7 +92,7 @@ headers = [
     "numberOfAnalystOpinions", "totalCash", "totalCashPerShare", "ebitda", "totalDebt",
     "quickRatio", "currentRatio", "totalRevenue", "debtToEquity", "revenuePerShare",
     "returnOnAssets", "returnOnEquity", "freeCashflow", "operatingCashflow",
-    "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins", "Calculated_Score"
+    "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins"
 ]
 
 # Define a data type mapping for headers
@@ -208,6 +209,7 @@ initialize_row_counter()
 PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
 headers_with_date = ["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers
 
+score_headers = ["Calculated_Score", "Conservative_Inv_Recom", "Conservative_Inv_Reson","Growth_Inv_Recom", "Growth_Inv_Reson","Momentum_Inv_Recom", "Momentum_Inv_Reson"]
 def ensure_dataset_exists():
     try:
         bq_client.get_dataset(BQ_DATASET)
@@ -244,7 +246,7 @@ def append_to_csv(data_row):
     with open(MASTER_CSV_FILE_PATH, mode="a", newline="") as csv_file:
         writer = csv.writer(csv_file)
         if write_header:
-            writer.writerow(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers)  # Add header row
+            writer.writerow(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers + score_headers)  # Add header row
             log_message(f"Header added to CSV file: {MASTER_CSV_FILE_PATH}")
         writer.writerow(data_row)
         log_message(f"Appended data to CSV file: {MASTER_CSV_FILE_PATH}")
@@ -255,7 +257,7 @@ def append_to_csv(data_row):
     with open(Daily_CSV_FILE_PATH, mode="a", newline="") as csv_file:
         writer = csv.writer(csv_file)
         if write_header:
-            writer.writerow(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers)  # Add header row
+            writer.writerow(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers + score_headers)  # Add header row
             log_message(f"Header added to CSV file: {Daily_CSV_FILE_PATH}")
         writer.writerow(data_row)
         log_message(f"Appended data to CSV file: {Daily_CSV_FILE_PATH}")
@@ -272,7 +274,7 @@ def append_to_excel(data_row):
         if sheet_name not in workbook.sheetnames:
             workbook.create_sheet(sheet_name)
             sheet = workbook[sheet_name]
-            sheet.append(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers)  # Add header
+            sheet.append(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers + score_headers)  # Add header
         else:
             sheet = workbook[sheet_name]
 
@@ -282,7 +284,13 @@ def append_to_excel(data_row):
     except Exception as e:
         log_message(f"Error saving to Excel: {e}")
 
-
+def validate_input(value, min_val=None):
+    if value is None or pd.isna(value) or not isinstance(value, (int, float)):
+        return None
+    if min_val is not None and value < min_val:
+        return None
+    return value
+        
 def calculate_individual_scores(pe, dividend_yield, earnings_growth):
     #print("calculate_individual_scores")
     dividend_yield = dividend_yield * 100
@@ -340,6 +348,86 @@ def calculate_individual_scores(pe, dividend_yield, earnings_growth):
     total_score = (pe_score * 0.4) + (dividend_score * 0.3) + (earnings_growth_score * 0.3)
     return round(total_score, 1)
 
+def analyze_stock_with_profiles(info):
+    recommendations = []
+    
+    #stock = yf.Ticker(ticker)
+    #info = stock.info
+    
+    try:
+        # Extract relevant fields
+        beta = info.get('beta', 'N/A')
+        pe_ratio = info.get('trailingPE', 'N/A')
+        forward_pe = info.get('forwardPE', 'N/A')
+        dividend_yield = info.get('dividendYield', 'N/A')
+        price_to_book = info.get('priceToBook', 'N/A')
+        profit_margins = info.get('profitMargins', 'N/A')
+        revenue_growth = info.get('revenueGrowth', 'N/A')
+        high_52w = info.get('fiftyTwoWeekHigh', 'N/A')
+        low_52w = info.get('fiftyTwoWeekLow', 'N/A')
+        recommendation_mean = info.get('recommendationMean', 'N/A')
+        current_price = info.get('currentPrice', 'N/A')
+
+        # 1. Conservative Investor (Low Risk, Income-Focused)
+        if beta != 'N/A' and beta < 1:
+            conservative_reason = "Low Beta (less volatile than the market)"
+        else:
+            conservative_reason = "High Beta (more volatile)"
+        
+        if dividend_yield != 'N/A' and dividend_yield > 0.03:
+            conservative_reason += ", Pays a good dividend (>3%)"
+        
+        recommendations.append({
+            "Cal_Investment_Profile": "Conservative Investor",
+            "Cal_Recommendation": "Buy" if dividend_yield != 'N/A' and dividend_yield > 0.03 else "Hold",
+            "Cal_Reason": conservative_reason
+        })
+
+        # 2. Growth Investor (Focus on High Growth)
+        growth_reason = []
+        if forward_pe != 'N/A' and forward_pe < 20:
+            growth_reason.append("Low Forward P/E (<20) indicates growth potential")
+        if revenue_growth != 'N/A' and revenue_growth > 0.1:
+            growth_reason.append("Strong Revenue Growth (>10%)")
+        if profit_margins != 'N/A' and profit_margins > 0.2:
+            growth_reason.append("Highly Profitable with margins > 20%")
+        
+        if growth_reason:
+            recommendations.append({
+                "Cal_Investment_Profile": "Growth Investor",
+                "Cal_Recommendation": "Buy" if forward_pe != 'N/A' and forward_pe < 20 else "Hold",
+                "Cal_Reason": ", ".join(growth_reason)
+            })
+
+        # 3. Momentum Investor (Focus on Recent Trends)
+        momentum_reason = []
+        if high_52w != 'N/A' and low_52w != 'N/A':
+            price_position = (current_price - low_52w) / (high_52w - low_52w)
+            if price_position > 0.75:
+                momentum_reason.append("Trading near its 52-week high (bullish momentum)")
+        
+        if recommendation_mean != 'N/A' and recommendation_mean < 2:
+            momentum_reason.append("Strong Buy recommendation from analysts")
+        
+        recommendations.append({
+            "Cal_Investment_Profile": "Momentum Investor",
+            "Cal_Recommendation": "Buy" if price_position > 0.75 else "Hold",
+            "Cal_Reason": ", ".join(momentum_reason) if momentum_reason else "No strong momentum"
+        })
+
+    except Exception as e:
+        recommendations.append({
+            "Cal_Investment_Profile": "Error",
+            "Cal_Recommendation": "N/A",
+            "Cal_Reason": str(e)
+        })
+    
+    # Convert to DataFrame for better readability
+    #df_recommendations = pd.DataFrame(recommendations)
+    #df_recommendations.insert(0, "Ticker", ticker)  # Add ticker as the first column
+    
+    return recommendations #df_recommendations
+    
 
 def fetch_and_update_stock_data(symbol):
     try:
@@ -351,19 +439,26 @@ def fetch_and_update_stock_data(symbol):
         current_counter = get_current_row_counter()
 
         # Safely access data with default values
-        pe_ratio = info.get('trailingPE', 'N/A')
-        dividend_yield = info.get('dividendYield', 'N/A')
-        earnings_growth = info.get('earningsQuarterlyGrowth', 'N/A')        
+        pe_ratio = info.get('trailingPE', 0)
+        dividend_yield = info.get('dividendYield', 0)
+        earnings_growth = info.get('earningsQuarterlyGrowth', 0)        
 
         # Calculate score (assuming the `calculate_individual_scores` function is defined)
         score = calculate_individual_scores(pe_ratio, dividend_yield, earnings_growth)
 
+        cal_recom = analyze_stock_with_profiles(info)
+        print(cal_recom)
         # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
-        info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]
+        info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]  + [score]
 
-        info_row["Calculated_Score"] = score
+        for recom in cal_recom:
+            #info_row.append(recom.get("Cal_Investment_Profile", ""))
+            info_row.append(recom.get("Cal_Recommendation", ""))
+            info_row.append(recom.get("Cal_Reason", ""))
+    
+        #info_row["Calculated_Score"].append(score)
 
         #info_row["Calculated_Score"] = calculate_individual_scores(info.get('trailingPE', 'N/A'), info.get('dividendYield', 'N/A'), info.get('earningsQuarterlyGrowth', 'N/A'))
         #info_row["Calculated_Score"] = calculate_individual_scores(info_row["trailingPE"], info_row["dividendYield"], info_row["earningsQuarterlyGrowth"])
@@ -374,7 +469,7 @@ def fetch_and_update_stock_data(symbol):
         
         # Append data to CSV and Excel
         append_to_csv(info_row)
-        #append_to_excel(info_row)
+        append_to_excel(info_row)
         return info_row
     except Exception as e:
         log_message(f"Error fetching data for {symbol}: {e}")
