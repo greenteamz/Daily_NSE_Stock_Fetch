@@ -22,11 +22,11 @@ ist_now = datetime.now(IST)
 ist_date = ist_now.date()
 
 # Generate log and CSV file names 
-log_filename = f"log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_score.txt"
-master_log_filename = f"Log_Master_NSE_BigQuery_test_dump_score.txt"
-csv_filename = f"NSE_Stock_Master_BQ_test_dump_score.csv"  # Append data for the same day
-csv_filename_daily = f"NSE_Stock_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_test_dump_score.csv"  # Append data for the same day
-excel_filename = f"NSE_Stock_Master_DataLake_test_dump_score.xlsx"  # Excel file for today
+log_filename = f"log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_score1.txt"
+master_log_filename = f"Log_Master_NSE_BigQuery_test_dump_score1.txt"
+csv_filename = f"NSE_Stock_Master_BQ_test_dump_score1.csv"  # Append data for the same day
+csv_filename_daily = f"NSE_Stock_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_test_dump_score1.csv"  # Append data for the same day
+excel_filename = f"NSE_Stock_Master_DataLake_test_dump_score1.xlsx"  # Excel file for today
 
 # Paths for logs, CSV, and Excel
 MASTER_LOG_FILE_PATH = os.path.join("logs", master_log_filename)
@@ -447,7 +447,7 @@ def fetch_and_update_stock_data(symbol):
         score = calculate_individual_scores(pe_ratio, dividend_yield, earnings_growth)
 
         cal_recom = analyze_stock_with_profiles(info)
-        print(cal_recom)
+        #print(cal_recom)
         # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
