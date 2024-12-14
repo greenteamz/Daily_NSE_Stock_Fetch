@@ -622,9 +622,10 @@ def load_data_to_bigquery():
                 csv_file, BQ_TABLE, job_config=job_config
             )
             load_job.result()  # Wait for the job to complete
+            log_message("Job Done")
             # Check for errors
             if load_job.errors:
-                log_message(f"Errors encountered during loading: {job.errors}")
+                log_message(f"Errors encountered during loading: {load_job.errors}")
             else:
                 log_message("Data loaded successfully, no errors.")
             log_message(f"Data successfully loaded to BigQuery from {temp_csv_path}.")
