@@ -138,7 +138,7 @@ data_type_map = {
     "trailingAnnualDividendYield": "FLOAT",
     "enterpriseValue": "INTEGER",
     "profitMargins": "FLOAT",
-    "floatShares": "INTEGER",
+    "floatShares": "FLOAT",
     "sharesOutstanding": "INTEGER",
     "heldPercentInsiders": "FLOAT",
     "heldPercentInstitutions": "FLOAT",
@@ -437,6 +437,8 @@ def analyze_stock_with_profiles(info):
                 momentum_reason.append("Trading near its 52-week high (bullish momentum)")
             elif price_position < 0.25:
                 momentum_reason.append("Trading near its 52-week low (bearish momentum)")
+            else:
+                momentum_reason.append("None")
        
         recommendations.append({
             "Cal_Investment_Profile": "Momentum Investor",
