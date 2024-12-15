@@ -11,6 +11,7 @@ import pytz
 import time
 import logging
 import pandas as pd
+from collections import defaultdict
 
 # Define IST timezone
 IST = pytz.timezone('Asia/Kolkata')
@@ -22,20 +23,21 @@ ist_now = datetime.now(IST)
 ist_date = ist_now.date()
 
 # Generate log and CSV file names 
-log_filename = f"log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_score1.txt"
-master_log_filename = f"Log_Master_NSE_BigQuery_test_dump_score1.txt"
-csv_filename = f"NSE_Stock_Master_BQ_test_dump_score1.csv"  # Append data for the same day
-csv_filename_daily = f"NSE_Stock_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_test_dump_score1.csv"  # Append data for the same day
-excel_filename = f"NSE_Stock_Master_DataLake_test_dump_score1.xlsx"  # Excel file for today
+log_filename = f"log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_score_final.txt"
+master_log_filename = f"Log_Master_NSE_BigQuery_score_final.txt"
+csv_filename = f"NSE_Stock_Master_BQ_score_final.csv"  # Append data for the same day
+csv_filename_daily = f"NSE_Stock_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_score_final.csv"  # Append data for the same day
+excel_filename = f"NSE_Stock_Master_DataLake_score_final.xlsx"  # Excel file for today
 
 # Paths for logs, CSV, and Excel
-MASTER_LOG_FILE_PATH = os.path.join("logs", master_log_filename)
+MASTER_LOG_FILE_PATH = os.path.join("master", master_log_filename)
 LOG_FILE_PATH = os.path.join("logs", log_filename)
-MASTER_CSV_FILE_PATH = os.path.join("csv", csv_filename)
+MASTER_CSV_FILE_PATH = os.path.join("master", csv_filename)
 Daily_CSV_FILE_PATH = os.path.join("csv", csv_filename_daily)
-EXCEL_FILE_PATH = os.path.join("excel", excel_filename)
+EXCEL_FILE_PATH = os.path.join("master", excel_filename)
 
 # Ensure directories exist
+os.makedirs("master", exist_ok=True)
 os.makedirs("master_log", exist_ok=True)
 os.makedirs("logs", exist_ok=True)
 os.makedirs("csv", exist_ok=True)
@@ -61,16 +63,11 @@ gc = gspread.service_account(filename=SERVICE_ACCOUNT_FILE)
 # Open Google Spreadsheet
 spreadsheet = gc.open('NSE_symbol')  # Replace with your Google Sheet name
 #source_worksheet = spreadsheet.worksheet('symbol')  # Replace with your sheet name
-source_worksheet = spreadsheet.worksheet('symbol_test')  # Test sheet name
+source_worksheet = spreadsheet.worksheet('symbol')  # Test sheet name
 
 # Fetch all stock symbols from the first column
 symbols = source_worksheet.col_values(1)[1:]  # Skip header row
 symbols = [symbol if symbol.endswith('.NS') else f"{symbol}.NS" for symbol in symbols]
-
-# Define BigQuery dataset and table with the project ID
-PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
-BQ_DATASET = "nse_stock_test_score3"  # Replace with your dataset name
-BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_data_test1"  # Fully-qualified table name
 
 # Define schema for BigQuery table
 headers = [
@@ -86,13 +83,14 @@ headers = [
     "enterpriseValue", "profitMargins", "floatShares", "sharesOutstanding",
     "heldPercentInsiders", "heldPercentInstitutions", "impliedSharesOutstanding",
     "bookValue", "priceToBook", "earningsQuarterlyGrowth", "trailingEps", "forwardEps",
-    "52WeekChange", "lastDividendValue", "lastDividendDate", "exchange", "quoteType",
-    "symbol", "shortName", "longName", "currentPrice", "targetHighPrice", "targetLowPrice",
-    "targetMeanPrice", "targetMedianPrice", "recommendationMean", "recommendationKey",
-    "numberOfAnalystOpinions", "totalCash", "totalCashPerShare", "ebitda", "totalDebt",
+    "52WeekChange", "lastDividendValue", "lastDividendDate", "exchange", "quoteType", 
+    "totalCash", "totalCashPerShare", "ebitda", "totalDebt",
     "quickRatio", "currentRatio", "totalRevenue", "debtToEquity", "revenuePerShare",
     "returnOnAssets", "returnOnEquity", "freeCashflow", "operatingCashflow",
-    "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins"
+    "earningsGrowth", "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins",
+    "symbol", "shortName", "longName", "currentPrice", "targetHighPrice", "targetLowPrice",
+    "targetMeanPrice", "targetMedianPrice", "recommendationMean", "recommendationKey",
+    "numberOfAnalystOpinions"
 ]
 
 # Define a data type mapping for headers
@@ -163,7 +161,7 @@ data_type_map = {
     "targetMedianPrice": "FLOAT",
     "recommendationMean": "FLOAT",
     "recommendationKey": "STRING",
-    "numberOfAnalystOpinions": "INTEGER",
+    "numberOfAnalystOpinions": "FLOAT",
     "totalCash": "INTEGER",
     "totalCashPerShare": "FLOAT",
     "ebitda": "INTEGER",
@@ -175,7 +173,7 @@ data_type_map = {
     "revenuePerShare": "FLOAT",
     "returnOnAssets": "FLOAT",
     "returnOnEquity": "FLOAT",
-    "freeCashflow": "INTEGER",
+    "freeCashflow": "FLOAT",
     "operatingCashflow": "INTEGER",
     "earningsGrowth": "FLOAT",
     "revenueGrowth": "FLOAT",
@@ -191,8 +189,11 @@ data_type_map = {
     "Growth_Invs_Reson": "STRING",
     "Momentum_Invs_Recom": "STRING",
     "Momentum_Invs_Reson": "STRING",
+    "sector_rank": "INTEGER",
+    "industry_rank": "INTEGER",
 }
 
+rank_headers = ["sector_rank", "industry_rank"]
 ROW_COUNTER_FILE = "master/nse_row_counter.txt"
 
 # Initialize row_insert_order
@@ -218,7 +219,7 @@ initialize_row_counter()
 PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
 headers_with_date = ["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers
 
-score_headers = ["Today_Growth", "Calculated_Score", "Score_Recommendation", "Conservative_Invs_Recom", "Conservative_Invs_Reson","Growth_Invs_Recom", "Growth_Invs_Reson","Momentum_Invs_Recom", "Momentum_Invs_Reson"]
+score_headers = ["Today_Growth", "Calculated_Score", "Score_Recommendation", "Conservative_Invs_Recom", "Conservative_Invs_Reson", "Growth_Invs_Recom", "Growth_Invs_Reson", "Momentum_Invs_Recom", "Momentum_Invs_Reson"]
 
 def ensure_dataset_exists():
     try:
@@ -240,7 +241,8 @@ def ensure_table_exists():
         schema = [bigquery.SchemaField("row_insert_order", "INTEGER"), bigquery.SchemaField("PreviousDayDate", "DATETIME"), bigquery.SchemaField("Symbol_Input", "STRING"),] + [
                 bigquery.SchemaField(header, data_type_map.get(header, "STRING"))
                 for header in headers
-                ] + [ bigquery.SchemaField(header, data_type_map.get(header, "STRING")) for header in score_headers ]
+                ] + [ bigquery.SchemaField(header, data_type_map.get(header, "STRING")) for header in score_headers ] +[ 
+                bigquery.SchemaField(header, data_type_map.get(header, "STRING")) for header in rank_headers ]
         
         table = bigquery.Table(BQ_TABLE, schema=schema)
         bq_client.create_table(table)
@@ -248,7 +250,27 @@ def ensure_table_exists():
     except Exception as e:
         log_message(f"Error ensuring table exists: {e}")
 
-def append_to_csv(data_row):
+def calculate_ranks(df, group_column, score_column, rank_column_name):
+    """
+    Calculate ranks within a group based on the score and append the rank as a new column.
+    """
+    df[rank_column_name] = df.groupby(group_column)[score_column].rank(ascending=False, method='dense').astype(int)
+    return df
+
+def calculate_rank(sheet, column_index):
+    """Calculate the rank of a given column in the sheet."""
+    column_values = []
+    for row in sheet.iter_rows(min_row=2, max_col=column_index, max_row=sheet.max_row):
+        column_values.append(row[column_index-1].value)
+    
+    sorted_values = sorted(set(column_values), reverse=True)
+    value_to_rank = {value: rank+1 for rank, value in enumerate(sorted_values)}
+
+    # Rank the values in the column
+    rank = value_to_rank.get(column_values[-1], None)
+    return rank
+    
+def append_to_csv(data_row, total_symbol):
     """Append a row of data to the CSV file, adding the header only if it's a new file."""
     write_header = not os.path.exists(MASTER_CSV_FILE_PATH)  # Check if file exists
 
@@ -258,8 +280,29 @@ def append_to_csv(data_row):
             writer.writerow(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers + score_headers)  # Add header row
             log_message(f"Header added to CSV file: {MASTER_CSV_FILE_PATH}")
         writer.writerow(data_row)
-        log_message(f"Appended data to CSV file: {MASTER_CSV_FILE_PATH}")
+        log_message(f"Appended data to Master CSV file: {MASTER_CSV_FILE_PATH}")
 
+        log_message(f" count: {processed_count}/{total_symbol}")
+        
+        # If it's the last row, calculate the ranks and update the file
+        if processed_count==total_symbol:
+            # Load the CSV file into DataFrame to calculate ranks
+            df = pd.read_csv(MASTER_CSV_FILE_PATH)
+            df.columns = df.columns.str.strip()
+            log_message(f" Entered into rank")
+            # Ensure 'sector' and 'industry' columns exist, adjust accordingly to your file's structure
+            if 'sector' in df.columns and 'industry' in df.columns and 'Calculated_Score' in df.columns:
+                # Calculate ranks for sector and industry based on 'Calculated_Score' column
+                log_message(f" Entered into column passed")
+                df = calculate_ranks(df, 'sector', 'Calculated_Score', 'sector_rank')
+                df = calculate_ranks(df, 'industry', 'Calculated_Score', 'industry_rank')
+
+                # Save the updated DataFrame back to the same CSV file, overwriting it
+                df.to_csv(MASTER_CSV_FILE_PATH, index=False)
+                log_message(f"Sector and Industry Rank calculation completed and saved to Master CSV file: {MASTER_CSV_FILE_PATH}")
+            else:
+                print(df.columns)
+                
     """Append a row of data to the CSV file, adding the header only if it's a new file."""
     write_header = not os.path.exists(Daily_CSV_FILE_PATH)  # Check if file exists
 
@@ -269,9 +312,26 @@ def append_to_csv(data_row):
             writer.writerow(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers + score_headers)  # Add header row
             log_message(f"Header added to CSV file: {Daily_CSV_FILE_PATH}")
         writer.writerow(data_row)
-        log_message(f"Appended data to CSV file: {Daily_CSV_FILE_PATH}")
+        log_message(f"Appended data to Daily CSV file: {Daily_CSV_FILE_PATH}")
 
-def append_to_excel(data_row):
+        # If it's the last row, calculate the ranks and update the file
+        if processed_count==total_symbol:
+            # Load the CSV file into DataFrame to calculate ranks
+            df = pd.read_csv(Daily_CSV_FILE_PATH)
+            log_message(f" Entered into rank D")
+            # Ensure 'sector' and 'industry' columns exist, adjust accordingly to your file's structure
+            if 'sector' in df.columns and 'industry' in df.columns and 'Calculated_Score' in df.columns:
+                # Calculate ranks for sector and industry based on 'Calculated_Score' column sector_rank industry_rank
+                df = calculate_ranks(df, 'sector', 'Calculated_Score', 'sector_rank')
+                df = calculate_ranks(df, 'industry', 'Calculated_Score', 'industry_rank')
+
+                # Save the updated DataFrame back to the same CSV file, overwriting it
+                df.to_csv(Daily_CSV_FILE_PATH, index=False)
+                log_message(f"Sector and Industry Rank calculation completed and saved to Daily CSV file: {Daily_CSV_FILE_PATH}")
+
+
+
+def append_to_excel(data_row, total_symbol):
     """Append data to an Excel sheet, creating a new sheet for the day."""
     try:
         if os.path.exists(EXCEL_FILE_PATH):
@@ -281,21 +341,75 @@ def append_to_excel(data_row):
 
         sheet_name = f"NSE_{ist_date}"
         if sheet_name not in workbook.sheetnames:
+            # Create a new sheet if it doesn't exist
             workbook.create_sheet(sheet_name)
             sheet = workbook[sheet_name]
-            sheet.append(["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers + score_headers)  # Add header
+            # Add header row, including sector_rank and industry_rank
+            sheet.append(
+                ["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers + score_headers + ["sector_rank", "industry_rank"]
+            )  # Ensure 'sector_rank' and 'industry_rank' headers are added
         else:
             sheet = workbook[sheet_name]
 
+        # Append data row
         sheet.append(data_row)
-        
-        # Freeze the first row and third column
+
+        # If it's the last row, calculate the ranks and update the file
+        if processed_count == total_symbol:
+            log_message(f"Entered into rank calculation for Excel")
+
+            # Fetch the column indices for 'Calculated_Score', 'sector', 'industry'
+            calculated_score_index = score_headers.index('Calculated_Score') + 3  # Adjusted for offset (row_insert_order, PreviousDayDate, Symbol_Input)
+            sector_index = headers.index('sector') + 3
+            industry_index = headers.index('industry') + 3
+            sector_rank_index = len(headers) + len(score_headers) + 4  # 'sector_rank' column index
+            industry_rank_index = len(headers) + len(score_headers) + 5  # 'industry_rank' column index
+
+            # Get all rows from the sheet to calculate ranks (skip header)
+            rows = list(sheet.iter_rows(min_row=2, values_only=True))  # Skip header
+
+            # Group rows by sector and industry
+            grouped_rows = defaultdict(list)
+            for row in rows:
+                sector_value = row[sector_index]
+                industry_value = row[industry_index]
+                grouped_rows[(sector_value, industry_value)].append(row)
+
+            # Create lists to store ranks for sector and industry
+            ranks_to_add = []  # Store rank values temporarily before writing them to the sheet
+
+            # Assign ranks within each group based on the 'Calculated_Score'
+            for (sector_value, industry_value), group_rows in grouped_rows.items():
+                # Sort the rows by 'Calculated_Score' within the group (descending order)
+                sorted_group = sorted(group_rows, key=lambda row: row[calculated_score_index], reverse=True)
+
+                # Assign ranks within the group
+                for rank, row in enumerate(sorted_group, start=1):
+                    ranks_to_add.append((row, rank if row[sector_index] == sector_value else 'N/A',  # sector_rank
+                                         rank if row[industry_index] == industry_value else 'N/A'))  # industry_rank
+
+            # Write ranks to the corresponding columns in the sheet
+            for row_idx, (row, sector_rank, industry_rank) in enumerate(ranks_to_add, start=2):  # Start from row 2
+                sheet.cell(row=row_idx, column=sector_rank_index, value=sector_rank)  # Add sector rank
+                sheet.cell(row=row_idx, column=industry_rank_index, value=industry_rank)  # Add industry rank
+
+            # Print sector_rank and industry_rank for validation
+            #for row in sheet.iter_rows(min_row=2, max_col=sheet.max_column, values_only=True):
+            #    print(f"Row: {row[:-2]}, Sector Rank: {row[-2]}, Industry Rank: {row[-1]}")
+
+            log_message(f"Rank calculation completed and appended to Excel file: {EXCEL_FILE_PATH}")
+
+        # Freeze the first row and third column for better viewing
         sheet.freeze_panes = 'D2'  # Freeze everything above row 2 and to the left of column C
 
+        # Save the workbook after appending the data and ranks
         workbook.save(EXCEL_FILE_PATH)
         log_message(f"Data appended to Excel file: {EXCEL_FILE_PATH}")
+
     except Exception as e:
         log_message(f"Error saving to Excel: {e}")
+
+
 
 def validate_input(value, min_val=None):
     if value is None or pd.isna(value) or not isinstance(value, (int, float)):
@@ -400,12 +514,12 @@ def analyze_stock_with_profiles(info):
             conservative_reason = "High Beta (more volatile)"
         
         if dividend_yield != 'N/A' and dividend_yield > 0.03:
-            conservative_reason += ",\n Pays a good dividend (>3%)"
+            conservative_reason += "-\n Pays a good dividend (>3%)"
         
         if price_to_book != 'N/A' and price_to_book < 1:
-            conservative_reason += ",\n Price-to-Book ratio (<1) indicates undervalued assets"
+            conservative_reason += "-\n Price-to-Book ratio (<1) indicates undervalued assets"
         elif price_to_book != 'N/A' and price_to_book < 2:
-            conservative_reason += ",\n Price-to-Book ratio (<2) indicates potential for growth"
+            conservative_reason += "-\n Price-to-Book ratio (<2) indicates potential for growth"
         
         recommendations.append({
             "Cal_Investment_Profile": "Conservative Investor",
@@ -426,7 +540,14 @@ def analyze_stock_with_profiles(info):
             recommendations.append({
                 "Cal_Investment_Profile": "Growth Investor",
                 "Cal_Recommendation": "Buy" if forward_pe != 'N/A' and forward_pe < 20 else "Hold",
-                "Cal_Reason": ",\n ".join(growth_reason)
+                "Cal_Reason": "- ".join(growth_reason)
+            })
+        else:
+            # Add a default entry with None as the reason
+            recommendations.append({
+                "Cal_Investment_Profile": "Growth Investor",
+                "Cal_Recommendation": "None",
+                "Cal_Reason": "None"
             })
 
         # 3. Momentum Investor (Focus on Recent Trends)
@@ -437,26 +558,26 @@ def analyze_stock_with_profiles(info):
                 momentum_reason.append("Trading near its 52-week high (bullish momentum)")
             elif price_position < 0.25:
                 momentum_reason.append("Trading near its 52-week low (bearish momentum)")
-            else:
-                momentum_reason.append("None")
+        else:
+            momentum_reason.append("None")
        
         recommendations.append({
             "Cal_Investment_Profile": "Momentum Investor",
             "Cal_Recommendation": "Buy" if price_position > 0.75 else "Hold",
-            "Cal_Reason": ",\n ".join(momentum_reason) if momentum_reason else "No strong momentum"
+            "Cal_Reason": "- ".join(momentum_reason) if momentum_reason else "No strong momentum"
         })
 
     except Exception as e:
         recommendations.append({
             "Cal_Investment_Profile": "Error",
-            "Cal_Recommendation": "",
-            "Cal_Reason": ""
+            "Cal_Recommendation": "None",
+            "Cal_Reason": "None"
         })
     
     return recommendations
     
     
-def fetch_and_update_stock_data(symbol):
+def fetch_and_update_stock_data(symbol, total_symbol):
     try:
         # Read the current row counter
         current_counter = get_current_row_counter()
@@ -485,12 +606,12 @@ def fetch_and_update_stock_data(symbol):
         else:
             today_growth_percentage = 'N/A'
 
-        # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         PREVIOUS_DAY_DATETIME = (ist_now - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
         # Extract data and include the Previous Day Date
         info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]  + [today_growth_percentage, score, score_recommendation]
 
         for recom in cal_recom:
+            #print(recom)
             #info_row.append(recom.get("Cal_Investment_Profile", ""))
             info_row.append(recom.get("Cal_Recommendation", ""))
             info_row.append(recom.get("Cal_Reason", ""))
@@ -500,8 +621,8 @@ def fetch_and_update_stock_data(symbol):
         update_row_counter(current_counter)
         
         # Append data to CSV and Excel
-        append_to_csv(info_row)
-        append_to_excel(info_row)
+        append_to_csv(info_row, total_symbol)
+        append_to_excel(info_row, total_symbol)
        
         return info_row
     except Exception as e:
@@ -527,7 +648,7 @@ def preprocess_data(csv_file_path):
                     expected_type = data_type_map.get(key, "STRING")
                     try:
                         if expected_type == "STRING":
-                            processed_row[key] = value.strip() if value else None  # Handle empty strings as None
+                            processed_row[key] = value.strip() if value else ""  # Handle empty strings as None
                         elif expected_type == "INTEGER":
                             processed_row[key] = int(value) if value else None
                         elif expected_type == "FLOAT":
@@ -555,20 +676,20 @@ def preprocess_data(csv_file_path):
                                 # Handle invalid or missing date values with a default date
                                 processed_row[key] = datetime(1990, 1, 1).date()
                         else:  # STRING
-                            processed_row[key] = value
+                            processed_row[key] = ""
                     except (ValueError, TypeError, KeyError) as ve:
                         errors.append(
-                            f"Row {row_num}, Field '{key}' with value '{value}' failed conversion to {expected_type}: {ve}"
+                            f"Row {processed_count}, Field '{key}' with value '{value}' failed conversion to {expected_type}: {ve}"
                         )
-                        processed_row[key] = None  # Default to None on error
+                        processed_row[key] = ""  # Default to None on error
                         
-                # Validate that the processed row has consistent column counts
-                if len(processed_row) == len(row):
-                    processed_rows.append(processed_row)
-                else:
-                    errors.append(f"Row {row_num} has inconsistent column counts.")
+                    # Validate that the processed row has consistent column counts
+                    #if len(processed_row) == len(row):
+                    #    processed_rows.append(processed_row)
+                    #else:
+                    #    errors.append(f"Row {row_num} has inconsistent column counts.")
                     
-                #processed_rows.append(processed_row)
+                processed_rows.append(processed_row)
     except Exception as e:
         log_message(f"Error reading or processing CSV file: {e}")
     
@@ -590,22 +711,6 @@ def load_data_to_bigquery():
             writer.writeheader()  # Write headers
             writer.writerows(processed_data)  # Write processed rows
         
-        df = pd.read_csv(temp_csv_path)
-
-        # Check if any rows have a different number of columns
-        column_count = len(df.columns)
-        print("column_count:", column_count)
-
-        # Ensure all numeric columns are properly filled with numeric values
-        for col in df.select_dtypes(include=["float64", "int64"]).columns:
-            df[col] = df[col].fillna(0)  # Use a numeric placeholder like -1 for missing values in numeric columns
-
-        # Ensure all string/object columns are properly filled with string values
-        for col in df.select_dtypes(include=["object"]).columns:
-            df[col] = df[col].fillna("")  # Use 'NULL' or any string value for missing values in string columns
-
-        df.to_csv('temp_processed.csv', index=False)
-
         log_message(f"Start to load data to BigQuery from {temp_csv_path}.")
 
         # Load the processed data into BigQuery
@@ -616,7 +721,7 @@ def load_data_to_bigquery():
                 write_disposition="WRITE_APPEND",  # Append data schema=schema
                 autodetect=False,
                 max_bad_records=500,  # Tolerate up to 50 bad rows
-                ignore_unknown_values=True,  # Ignore unexpected columns
+               # ignore_unknown_values=True,  # Ignore unexpected columns
             )
             load_job = bq_client.load_table_from_file(
                 csv_file, BQ_TABLE, job_config=job_config
@@ -637,11 +742,18 @@ processed_count = 0
 
 # Process each symbol
 for symbol in symbols:
-    fetch_and_update_stock_data(symbol)
     processed_count += 1
+    fetch_and_update_stock_data(symbol, len(symbols))
+
     # Add a delay to avoid rate-limiting
-    time.sleep(0.7)
+    time.sleep(0.9)
     log_message(f"Processed {processed_count}/{len(symbols)} symbols.")
+
+
+# Define BigQuery dataset and table with the project ID
+PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
+BQ_DATASET = "nse_stock_score_final"  # Replace with your dataset name
+BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_final"  # Fully-qualified table name
 
 # BigQuery authentication
 bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
