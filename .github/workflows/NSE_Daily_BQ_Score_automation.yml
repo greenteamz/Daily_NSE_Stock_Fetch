@@ -1,9 +1,9 @@
-name: NSE_Daily_BQ_Score_automation
+name: NSE_Daily_BQ_Score_Automation
 
 on:
   schedule:
-    # Trigger the action every day at 6:00 AM IST (12:30 AM UTC)
-    - cron: "30 0 * * *"
+    # Trigger the action every day at 6:00 PM IST (12:30 PM UTC)
+    - cron: "30 12 * * *"
   workflow_dispatch:
 
 jobs:
@@ -37,16 +37,16 @@ jobs:
     # Step 5: Configure Git
     - name: Set up Git
       run: |
-        git config --global user.name "Aravinthkumar NSE BigQuery"
+        git config --global user.name "Aravinthkumar NSE BQ"
         git config --global user.email "aravinthkumarj1@gmail.com"
 
-    # Step 6: Check if today is Sunday or Monday
-    - name: Skip Sundays and Mondays
+    # Step 6: Check if today is Saturday or Sunday
+    - name: Skip Saturdays and Sundays
       id: check_day
       run: |
         DAY_OF_WEEK=$(date +%u) # 1=Monday, 7=Sunday
-        if [[ "$DAY_OF_WEEK" -eq 1 || "$DAY_OF_WEEK" -eq 7 ]]; then
-          echo "continue=true" >> $GITHUB_ENV
+        if [[ "$DAY_OF_WEEK" -eq 6 || "$DAY_OF_WEEK" -eq 7 ]]; then
+          echo "continue=false" >> $GITHUB_ENV
         else
           echo "continue=true" >> $GITHUB_ENV
         fi
