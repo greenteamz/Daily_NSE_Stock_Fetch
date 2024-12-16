@@ -103,8 +103,8 @@ data_type_map = {
     "compensationRisk": "FLOAT",
     "shareHolderRightsRisk": "FLOAT",
     "overallRisk": "FLOAT",
-    "maxAge": "INTEGER",
-    "priceHint": "INTEGER",
+    "maxAge": "FLOAT",
+    "priceHint": "FLOAT",
     "previousClose": "FLOAT",
     "open": "FLOAT",
     "dayLow": "FLOAT",
@@ -121,12 +121,12 @@ data_type_map = {
     "beta": "FLOAT",
     "trailingPE": "FLOAT",
     "forwardPE": "FLOAT",
-    "volume": "INTEGER",
-    "regularMarketVolume": "INTEGER",
-    "averageVolume": "INTEGER",
-    "averageVolume10days": "INTEGER",
-    "averageDailyVolume10Day": "INTEGER",
-    "marketCap": "INTEGER",
+    "volume": "FLOAT",
+    "regularMarketVolume": "FLOAT",
+    "averageVolume": "FLOAT",
+    "averageVolume10days": "FLOAT",
+    "averageDailyVolume10Day": "FLOAT",
+    "marketCap": "FLOAT",
     "fiftyTwoWeekLow": "FLOAT",
     "fiftyTwoWeekHigh": "FLOAT",
     "priceToSalesTrailing12Months": "FLOAT",
@@ -134,13 +134,13 @@ data_type_map = {
     "twoHundredDayAverage": "FLOAT",
     "trailingAnnualDividendRate": "FLOAT",
     "trailingAnnualDividendYield": "FLOAT",
-    "enterpriseValue": "INTEGER",
+    "enterpriseValue": "FLOAT",
     "profitMargins": "FLOAT",
     "floatShares": "FLOAT",
-    "sharesOutstanding": "INTEGER",
+    "sharesOutstanding": "FLOAT",
     "heldPercentInsiders": "FLOAT",
     "heldPercentInstitutions": "FLOAT",
-    "impliedSharesOutstanding": "INTEGER",
+    "impliedSharesOutstanding": "FLOAT",
     "bookValue": "FLOAT",
     "priceToBook": "FLOAT",
     "earningsQuarterlyGrowth": "FLOAT",
@@ -162,19 +162,19 @@ data_type_map = {
     "recommendationMean": "FLOAT",
     "recommendationKey": "STRING",
     "numberOfAnalystOpinions": "FLOAT",
-    "totalCash": "INTEGER",
+    "totalCash": "FLOAT",
     "totalCashPerShare": "FLOAT",
-    "ebitda": "INTEGER",
-    "totalDebt": "INTEGER",
+    "ebitda": "FLOAT",
+    "totalDebt": "FLOAT",
     "quickRatio": "FLOAT",
     "currentRatio": "FLOAT",
-    "totalRevenue": "INTEGER",
+    "totalRevenue": "FLOAT",
     "debtToEquity": "FLOAT",
     "revenuePerShare": "FLOAT",
     "returnOnAssets": "FLOAT",
     "returnOnEquity": "FLOAT",
     "freeCashflow": "FLOAT",
-    "operatingCashflow": "INTEGER",
+    "operatingCashflow": "FLOAT",
     "earningsGrowth": "FLOAT",
     "revenueGrowth": "FLOAT",
     "grossMargins": "FLOAT",
@@ -194,7 +194,7 @@ data_type_map = {
 }
 
 rank_headers = ["sector_rank", "industry_rank"]
-ROW_COUNTER_FILE = "master/nse_row_counter.txt"
+ROW_COUNTER_FILE = "master/nse_row_counter_1.txt"
 
 # Initialize row_insert_order
 def initialize_row_counter():
@@ -253,22 +253,30 @@ def ensure_table_exists():
 def calculate_ranks(df, group_column, score_column, rank_column_name):
     """
     Calculate ranks within a group based on the score and append the rank as a new column.
+    Handles NaN values in both group and score columns.
     """
-    df[rank_column_name] = df.groupby(group_column)[score_column].rank(ascending=False, method='dense').astype(int)
+    # Replace NaN values in score_column with a placeholder (-1) for rank calculation
+    df[score_column] = pd.to_numeric(df[score_column], errors="coerce").fillna(-1)
+
+    # Exclude rows where group_column is NaN
+    valid_rows = ~df[group_column].isna()
+    print(df[group_column].isna())
+    # Initialize the rank column with 0 as the default placeholder
+    df[rank_column_name] = 0
+
+    # Perform rank calculation only for valid rows
+    df.loc[valid_rows, rank_column_name] = (
+        df[valid_rows]
+        .groupby(group_column)[score_column]
+        .rank(ascending=False, method='dense', na_option='bottom')
+        .fillna(0)
+        .astype(int)
+    )
+
+    # Convert rank to integer (valid ranks) while keeping placeholder as 0
+    df[rank_column_name] = df[rank_column_name].fillna(0).astype(int)
     return df
 
-def calculate_rank(sheet, column_index):
-    """Calculate the rank of a given column in the sheet."""
-    column_values = []
-    for row in sheet.iter_rows(min_row=2, max_col=column_index, max_row=sheet.max_row):
-        column_values.append(row[column_index-1].value)
-    
-    sorted_values = sorted(set(column_values), reverse=True)
-    value_to_rank = {value: rank+1 for rank, value in enumerate(sorted_values)}
-
-    # Rank the values in the column
-    rank = value_to_rank.get(column_values[-1], None)
-    return rank
     
 def append_to_csv(data_row, total_symbol):
     """Append a row of data to the CSV file, adding the header only if it's a new file."""
@@ -289,11 +297,16 @@ def append_to_csv(data_row, total_symbol):
             # Load the CSV file into DataFrame to calculate ranks
             df = pd.read_csv(MASTER_CSV_FILE_PATH)
             df.columns = df.columns.str.strip()
-            log_message(f" Entered into rank")
             # Ensure 'sector' and 'industry' columns exist, adjust accordingly to your file's structure
             if 'sector' in df.columns and 'industry' in df.columns and 'Calculated_Score' in df.columns:
                 # Calculate ranks for sector and industry based on 'Calculated_Score' column
-                log_message(f" Entered into column passed")
+                log_message(f"Required columns found in Master CSV, starting rank calculation")
+
+                # Handle NaN values in required columns
+                df['Calculated_Score'] = df['Calculated_Score'].fillna(-1)  # Replace NaN in score_column with -1
+                df['sector'] = df['sector'].fillna('Unknown')  # Replace NaN in sector with 'Unknown'
+                df['industry'] = df['industry'].fillna('Unknown')  # Replace NaN in industry with 'Unknown'
+
                 df = calculate_ranks(df, 'sector', 'Calculated_Score', 'sector_rank')
                 df = calculate_ranks(df, 'industry', 'Calculated_Score', 'industry_rank')
 
@@ -318,9 +331,15 @@ def append_to_csv(data_row, total_symbol):
         if processed_count==total_symbol:
             # Load the CSV file into DataFrame to calculate ranks
             df = pd.read_csv(Daily_CSV_FILE_PATH)
-            log_message(f" Entered into rank D")
             # Ensure 'sector' and 'industry' columns exist, adjust accordingly to your file's structure
             if 'sector' in df.columns and 'industry' in df.columns and 'Calculated_Score' in df.columns:
+                log_message(f"Required columns found in Daily CSV, starting rank calculation")
+                
+                # Handle NaN values in required columns
+                df['Calculated_Score'] = df['Calculated_Score'].fillna(-1)  # Replace NaN in score_column with -1
+                df['sector'] = df['sector'].fillna('Unknown')  # Replace NaN in sector with 'Unknown'
+                df['industry'] = df['industry'].fillna('Unknown')  # Replace NaN in industry with 'Unknown'
+                
                 # Calculate ranks for sector and industry based on 'Calculated_Score' column sector_rank industry_rank
                 df = calculate_ranks(df, 'sector', 'Calculated_Score', 'sector_rank')
                 df = calculate_ranks(df, 'industry', 'Calculated_Score', 'industry_rank')
@@ -368,34 +387,35 @@ def append_to_excel(data_row, total_symbol):
             # Get all rows from the sheet to calculate ranks (skip header)
             rows = list(sheet.iter_rows(min_row=2, values_only=True))  # Skip header
 
+            # Prepare data by replacing NaN/null values
+            prepared_rows = []
+            for row in rows:
+                calculated_score = row[calculated_score_index] if row[calculated_score_index] is not None else -1  # Replace NaN in score with -1
+                sector = row[sector_index] if row[sector_index] is not None else "Unknown"  # Replace NaN in sector with 'Unknown'
+                industry = row[industry_index] if row[industry_index] is not None else "Unknown"  # Replace NaN in industry with 'Unknown'
+                prepared_rows.append((row, calculated_score, sector, industry))
+
             # Group rows by sector and industry
             grouped_rows = defaultdict(list)
-            for row in rows:
-                sector_value = row[sector_index]
-                industry_value = row[industry_index]
-                grouped_rows[(sector_value, industry_value)].append(row)
+            for original_row, calculated_score, sector, industry in prepared_rows:
+                grouped_rows[(sector, industry)].append((original_row, calculated_score))
 
             # Create lists to store ranks for sector and industry
             ranks_to_add = []  # Store rank values temporarily before writing them to the sheet
 
             # Assign ranks within each group based on the 'Calculated_Score'
-            for (sector_value, industry_value), group_rows in grouped_rows.items():
+            for (sector, industry), group_rows in grouped_rows.items():
                 # Sort the rows by 'Calculated_Score' within the group (descending order)
-                sorted_group = sorted(group_rows, key=lambda row: row[calculated_score_index], reverse=True)
+                sorted_group = sorted(group_rows, key=lambda x: x[1], reverse=True)
 
                 # Assign ranks within the group
-                for rank, row in enumerate(sorted_group, start=1):
-                    ranks_to_add.append((row, rank if row[sector_index] == sector_value else 'N/A',  # sector_rank
-                                         rank if row[industry_index] == industry_value else 'N/A'))  # industry_rank
+                for rank, (original_row, _) in enumerate(sorted_group, start=1):
+                    ranks_to_add.append((original_row, rank, rank))  # sector_rank and industry_rank
 
             # Write ranks to the corresponding columns in the sheet
-            for row_idx, (row, sector_rank, industry_rank) in enumerate(ranks_to_add, start=2):  # Start from row 2
+            for row_idx, (original_row, sector_rank, industry_rank) in enumerate(ranks_to_add, start=2):  # Start from row 2
                 sheet.cell(row=row_idx, column=sector_rank_index, value=sector_rank)  # Add sector rank
                 sheet.cell(row=row_idx, column=industry_rank_index, value=industry_rank)  # Add industry rank
-
-            # Print sector_rank and industry_rank for validation
-            #for row in sheet.iter_rows(min_row=2, max_col=sheet.max_column, values_only=True):
-            #    print(f"Row: {row[:-2]}, Sector Rank: {row[-2]}, Industry Rank: {row[-1]}")
 
             log_message(f"Rank calculation completed and appended to Excel file: {EXCEL_FILE_PATH}")
 
@@ -408,7 +428,6 @@ def append_to_excel(data_row, total_symbol):
 
     except Exception as e:
         log_message(f"Error saving to Excel: {e}")
-
 
 
 def validate_input(value, min_val=None):
@@ -720,7 +739,7 @@ def load_data_to_bigquery():
                 skip_leading_rows=1,  # Skip header row
                 write_disposition="WRITE_APPEND",  # Append data schema=schema
                 autodetect=False,
-                max_bad_records=500,  # Tolerate up to 50 bad rows
+                max_bad_records=5000,  # Tolerate up to 50 bad rows
                # ignore_unknown_values=True,  # Ignore unexpected columns
             )
             load_job = bq_client.load_table_from_file(
@@ -752,8 +771,8 @@ for symbol in symbols:
 
 # Define BigQuery dataset and table with the project ID
 PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
-BQ_DATASET = "nse_stock_score_final"  # Replace with your dataset name
-BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_final"  # Fully-qualified table name
+BQ_DATASET = "nse_stock_score_final1"  # Replace with your dataset name
+BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_final_10"  # Fully-qualified table name
 
 # BigQuery authentication
 bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
