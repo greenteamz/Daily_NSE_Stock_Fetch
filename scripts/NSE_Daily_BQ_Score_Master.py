@@ -194,7 +194,7 @@ data_type_map = {
 }
 
 rank_headers = ["sector_rank", "industry_rank"]
-ROW_COUNTER_FILE = "master/nse_row_counter.txt"
+ROW_COUNTER_FILE = "master_nse/nse_row_counter.txt"
 
 # Initialize row_insert_order
 def initialize_row_counter():
