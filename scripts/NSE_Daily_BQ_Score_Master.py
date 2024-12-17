@@ -41,7 +41,7 @@ CSV_DIR = os.path.join(BASE_DIR, "csv_nse")
 MASTER_LOG_FILE_PATH = os.path.join(MASTER_DIR, master_log_filename)
 LOG_FILE_PATH = os.path.join(LOGS_DIR, log_filename)
 MASTER_CSV_FILE_PATH = os.path.join(MASTER_DIR, csv_filename)
-DAILY_CSV_FILE_PATH = os.path.join(CSV_DIR, csv_filename_daily)
+Daily_CSV_FILE_PATH  = os.path.join(CSV_DIR, csv_filename_daily)
 EXCEL_FILE_PATH = os.path.join(MASTER_DIR, excel_filename)
 
 # Ensure all required directories exist
