@@ -266,7 +266,7 @@ def calculate_ranks(df, group_column, score_column, rank_column_name):
 
     # Exclude rows where group_column is NaN
     valid_rows = ~df[group_column].isna()
-    print(df[group_column].isna())
+    #print(df[group_column].isna())
     # Initialize the rank column with 0 as the default placeholder
     df[rank_column_name] = 0
 
