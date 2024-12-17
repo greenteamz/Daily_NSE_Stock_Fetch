@@ -223,7 +223,7 @@ initialize_row_counter()
 # Add "Previous Day Date" to headers
 # PREVIOUS_DAY_DATE = (ist_date - timedelta(days=1)).strftime('%Y-%m-%d') ist_now.strftime('%Y-%m-%d_%H-%M-%S')
 PREVIOUS_DAY_DATETIME = (ist_now.strftime('%Y-%m-%d %H:%M:%S')
-headers_with_date = ["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers
+#headers_with_date = ["row_insert_order", "PreviousDayDate", "Symbol_Input"] + headers
 
 score_headers = ["Today_Growth", "Calculated_Score", "Score_Recommendation", "Conservative_Invs_Recom", "Conservative_Invs_Reson", "Growth_Invs_Recom", "Growth_Invs_Reson", "Momentum_Invs_Recom", "Momentum_Invs_Reson"]
 
