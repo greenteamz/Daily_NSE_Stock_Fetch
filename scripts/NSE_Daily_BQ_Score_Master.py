@@ -29,19 +29,25 @@ csv_filename = f"NSE_Stock_Master_BQ_score_master.csv"  # Append data for the sa
 csv_filename_daily = f"NSE_Stock_Daily_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_score_master.csv"  # Append data for the same day
 excel_filename = f"NSE_Stock_Master_DataLake_score_master.xlsx"  # Excel file for today
 
-# Paths for logs, CSV, and Excel
-MASTER_LOG_FILE_PATH = os.path.join("master_nse", master_log_filename)
-LOG_FILE_PATH = os.path.join("logs_nse", log_filename)
-MASTER_CSV_FILE_PATH = os.path.join("master_nse", csv_filename)
-Daily_CSV_FILE_PATH = os.path.join("csv_nse", csv_filename_daily)
-EXCEL_FILE_PATH = os.path.join("master_nse", excel_filename)
+# Define base directory
+BASE_DIR = "NSE"
 
-# Ensure directories exist
-os.makedirs("master_nse", exist_ok=True)
-#os.makedirs("master_nse", exist_ok=True)
-os.makedirs("logs_nse", exist_ok=True)
-os.makedirs("csv_nse", exist_ok=True)
-#os.makedirs("csv_nse", exist_ok=True)
+# Subdirectories under NSE
+MASTER_DIR = os.path.join(BASE_DIR, "master_nse")
+LOGS_DIR = os.path.join(BASE_DIR, "logs_nse")
+CSV_DIR = os.path.join(BASE_DIR, "csv_nse")
+
+# Paths for logs, CSV, and Excel
+MASTER_LOG_FILE_PATH = os.path.join(MASTER_DIR, master_log_filename)
+LOG_FILE_PATH = os.path.join(LOGS_DIR, log_filename)
+MASTER_CSV_FILE_PATH = os.path.join(MASTER_DIR, csv_filename)
+DAILY_CSV_FILE_PATH = os.path.join(CSV_DIR, csv_filename_daily)
+EXCEL_FILE_PATH = os.path.join(MASTER_DIR, excel_filename)
+
+# Ensure all required directories exist
+os.makedirs(MASTER_DIR, exist_ok=True)
+os.makedirs(LOGS_DIR, exist_ok=True)
+os.makedirs(CSV_DIR, exist_ok=True)
 
 # Log function
 def log_message(message):
@@ -194,7 +200,7 @@ data_type_map = {
 }
 
 rank_headers = ["sector_rank", "industry_rank"]
-ROW_COUNTER_FILE = "master_nse/nse_row_counter.txt"
+ROW_COUNTER_FILE = os.path.join(MASTER_DIR, "nse_row_counter.txt")
 
 # Initialize row_insert_order
 def initialize_row_counter():
