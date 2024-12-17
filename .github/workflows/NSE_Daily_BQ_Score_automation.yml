@@ -65,6 +65,6 @@ jobs:
       run: |
         git remote set-url origin https://x-access-token:${GH_PAT}@github.com/greenteamz/Daily_NSE_Stock_Fetch.git
         git status
-        git add logs/* csv/* master/* excel/*
+        git add logs/* csv/* master/* excel/* NSE/*
         git commit -m "$(date) NSE Daily update"
         git push origin main --force
