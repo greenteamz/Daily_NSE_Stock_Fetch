@@ -353,7 +353,37 @@ def append_to_csv(data_row, total_symbol):
                 # Save the updated DataFrame back to the same CSV file, overwriting it
                 df.to_csv(Daily_CSV_FILE_PATH, index=False)
                 log_message(f"Sector and Industry Rank calculation completed and saved to Daily CSV file: {Daily_CSV_FILE_PATH}")
+                
+        # Load or create the Excel workbook
+        if os.path.exists(EXCEL_FILE_PATH):
+            workbook = load_workbook(EXCEL_FILE_PATH)
+            log_message(f"Loaded existing Excel file. {EXCEL_FILE_PATH}")
+        else:
+            workbook = Workbook()
+            workbook.remove(workbook.active)  # Remove default sheet
+            log_message(f"Created new Excel file. {EXCEL_FILE_PATH}")
 
+        # Check if sheet already exists, create if not
+        sheet_name = f"NSE_{ist_date}"
+        if sheet_name not in workbook.sheetnames:
+            # Create a new sheet if it doesn't exist
+            workbook.create_sheet(sheet_name)
+            sheet = workbook[sheet_name]
+            sheet.append(df.columns.tolist())  # Add headers
+            log_message(f"New sheet created: {sheet_name}")
+        else:
+            sheet = workbook[sheet_name]
+
+        # Append data to the sheet row by row
+        for row in df.itertuples(index=False):
+            sheet.append(row)
+
+        # Freeze the first row and third column for better viewing
+        sheet.freeze_panes = 'D2'  # Freeze everything above row 2 and to the left of column C
+
+        # Save the updated Excel file
+        workbook.save(EXCEL_FILE_PATH)
+        log_message(f"Data successfully appended to Excel file: {EXCEL_FILE_PATH}_{sheet_name}")
 
 
 def append_to_excel(data_row, total_symbol):
@@ -539,12 +569,12 @@ def analyze_stock_with_profiles(info):
             conservative_reason = "High Beta (more volatile)"
         
         if dividend_yield != 'N/A' and dividend_yield > 0.03:
-            conservative_reason += "-\n Pays a good dividend (>3%)"
+            conservative_reason += "- Pays a good dividend (>3%)"
         
         if price_to_book != 'N/A' and price_to_book < 1:
-            conservative_reason += "-\n Price-to-Book ratio (<1) indicates undervalued assets"
+            conservative_reason += "- Price-to-Book ratio (<1) indicates undervalued assets"
         elif price_to_book != 'N/A' and price_to_book < 2:
-            conservative_reason += "-\n Price-to-Book ratio (<2) indicates potential for growth"
+            conservative_reason += "- Price-to-Book ratio (<2) indicates potential for growth"
         
         recommendations.append({
             "Cal_Investment_Profile": "Conservative Investor",
@@ -647,7 +677,7 @@ def fetch_and_update_stock_data(symbol, total_symbol):
         
         # Append data to CSV and Excel
         append_to_csv(info_row, total_symbol)
-        append_to_excel(info_row, total_symbol)
+        #append_to_excel(info_row, total_symbol)
        
         return info_row
     except Exception as e:
@@ -731,6 +761,12 @@ def load_data_to_bigquery():
         
         # Write processed data back to a temporary CSV for BigQuery loading
         temp_csv_path = "temp_processed.csv"
+        
+        # Check if the file exists, and delete it if it does
+        if os.path.exists(temp_csv_path):
+            os.remove(temp_csv_path)
+            log_message(f"Deleted the file before start - {temp_csv_path}.")
+            
         with open(temp_csv_path, "w", newline="") as temp_csv:
             writer = csv.DictWriter(temp_csv, fieldnames=processed_data[0].keys())
             writer.writeheader()  # Write headers
