@@ -539,12 +539,12 @@ def analyze_stock_with_profiles(info):
             conservative_reason = "High Beta (more volatile)"
         
         if dividend_yield != 'N/A' and dividend_yield > 0.03:
-            conservative_reason += "-\n Pays a good dividend (>3%)"
+            conservative_reason += "- Pays a good dividend (>3%)"
         
         if price_to_book != 'N/A' and price_to_book < 1:
-            conservative_reason += "-\n Price-to-Book ratio (<1) indicates undervalued assets"
+            conservative_reason += "- Price-to-Book ratio (<1) indicates undervalued assets"
         elif price_to_book != 'N/A' and price_to_book < 2:
-            conservative_reason += "-\n Price-to-Book ratio (<2) indicates potential for growth"
+            conservative_reason += "- Price-to-Book ratio (<2) indicates potential for growth"
         
         recommendations.append({
             "Cal_Investment_Profile": "Conservative Investor",
@@ -731,6 +731,11 @@ def load_data_to_bigquery():
         
         # Write processed data back to a temporary CSV for BigQuery loading
         temp_csv_path = "temp_processed.csv"
+        # Check if the file exists, and delete it if it does
+        if os.path.exists(temp_csv_path):
+            os.remove(temp_csv_path)
+            log_message(f"Deleted the file before start - {temp_csv_path}.")
+            
         with open(temp_csv_path, "w", newline="") as temp_csv:
             writer = csv.DictWriter(temp_csv, fieldnames=processed_data[0].keys())
             writer.writeheader()  # Write headers
@@ -758,6 +763,17 @@ def load_data_to_bigquery():
                 log_message(f"Errors encountered during loading: {load_job.errors}")
             else:
                 log_message("Data loaded successfully, no errors.")
+        
+            data = pd.read_csv(temp_csv_path)
+    
+            # Check the shape of the data and review its structure
+            data_shape = data.shape
+            data_columns = data.columns.tolist()
+            
+            # Review the rows that might have fewer columns than expected
+            problematic_rows = data[data.isnull().any(axis=1)]
+            print(problematic_rows)
+        
             log_message(f"Data successfully loaded to BigQuery from {temp_csv_path}.")
     except Exception as e:
         log_message(f"Error loading data to BigQuery: {e}")
@@ -778,7 +794,7 @@ for symbol in symbols:
 # Define BigQuery dataset and table with the project ID
 PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
 BQ_DATASET = "nse_stock_score_test"  # Replace with your dataset name
-BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_test_12"  # Fully-qualified table name
+BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_test_13"  # Fully-qualified table name
 
 # BigQuery authentication
 bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
