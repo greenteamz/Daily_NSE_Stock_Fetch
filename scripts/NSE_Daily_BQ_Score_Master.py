@@ -354,36 +354,36 @@ def append_to_csv(data_row, total_symbol):
                 df.to_csv(Daily_CSV_FILE_PATH, index=False)
                 log_message(f"Sector and Industry Rank calculation completed and saved to Daily CSV file: {Daily_CSV_FILE_PATH}")
                 
-        # Load or create the Excel workbook
-        if os.path.exists(EXCEL_FILE_PATH):
-            workbook = load_workbook(EXCEL_FILE_PATH)
-            log_message(f"Loaded existing Excel file. {EXCEL_FILE_PATH}")
-        else:
-            workbook = Workbook()
-            workbook.remove(workbook.active)  # Remove default sheet
-            log_message(f"Created new Excel file. {EXCEL_FILE_PATH}")
-
-        # Check if sheet already exists, create if not
-        sheet_name = f"NSE_{ist_date}"
-        if sheet_name not in workbook.sheetnames:
-            # Create a new sheet if it doesn't exist
-            workbook.create_sheet(sheet_name)
-            sheet = workbook[sheet_name]
-            sheet.append(df.columns.tolist())  # Add headers
-            log_message(f"New sheet created: {sheet_name}")
-        else:
-            sheet = workbook[sheet_name]
-
-        # Append data to the sheet row by row
-        for row in df.itertuples(index=False):
-            sheet.append(row)
-
-        # Freeze the first row and third column for better viewing
-        sheet.freeze_panes = 'D2'  # Freeze everything above row 2 and to the left of column C
-
-        # Save the updated Excel file
-        workbook.save(EXCEL_FILE_PATH)
-        log_message(f"Data successfully appended to Excel file: {EXCEL_FILE_PATH}_{sheet_name}")
+            # Load or create the Excel workbook
+            if os.path.exists(EXCEL_FILE_PATH):
+                workbook = load_workbook(EXCEL_FILE_PATH)
+                log_message(f"Loaded existing Excel file. {EXCEL_FILE_PATH}")
+            else:
+                workbook = Workbook()
+                workbook.remove(workbook.active)  # Remove default sheet
+                log_message(f"Created new Excel file. {EXCEL_FILE_PATH}")
+    
+            # Check if sheet already exists, create if not
+            sheet_name = f"NSE_{ist_date}"
+            if sheet_name not in workbook.sheetnames:
+                # Create a new sheet if it doesn't exist
+                workbook.create_sheet(sheet_name)
+                sheet = workbook[sheet_name]
+                sheet.append(df.columns.tolist())  # Add headers
+                log_message(f"New sheet created: {sheet_name}")
+            else:
+                sheet = workbook[sheet_name]
+    
+            # Append data to the sheet row by row
+            for row in df.itertuples(index=False):
+                sheet.append(row)
+    
+            # Freeze the first row and third column for better viewing
+            sheet.freeze_panes = 'D2'  # Freeze everything above row 2 and to the left of column C
+    
+            # Save the updated Excel file
+            workbook.save(EXCEL_FILE_PATH)
+            log_message(f"Data successfully appended to Excel file: {EXCEL_FILE_PATH}_{sheet_name}")
 
 
 def append_to_excel(data_row, total_symbol):
@@ -807,7 +807,7 @@ for symbol in symbols:
     fetch_and_update_stock_data(symbol, len(symbols))
 
     # Add a delay to avoid rate-limiting
-    time.sleep(0.7)
+    time.sleep(0.5)
     log_message(f"Processed {processed_count}/{len(symbols)} symbols.")
 
 
