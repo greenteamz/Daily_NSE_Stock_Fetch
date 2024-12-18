@@ -817,7 +817,7 @@ for symbol in symbols:
     fetch_and_update_stock_data(symbol, len(symbols))
 
     # Add a delay to avoid rate-limiting
-    time.sleep(0.7)
+    time.sleep(0.5)
     log_message(f"Processed {processed_count}/{len(symbols)} symbols.")
 
 
