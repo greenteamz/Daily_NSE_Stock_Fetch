@@ -8,7 +8,7 @@ on:
 
 jobs:
   Fetch-world-stock-bigquery-score:
-    runs-on: [self-hosted, windows]
+    runs-on: ubuntu-latest
 
     steps:
     # Step 1: Checkout the repository
