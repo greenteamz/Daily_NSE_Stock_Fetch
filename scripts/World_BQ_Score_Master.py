@@ -73,11 +73,11 @@ source_worksheet = spreadsheet.worksheet('symbol_world')  # Test sheet name
 
 # Fetch all stock symbols from the first column
 symbols = source_worksheet.col_values(1)[1:]  # Skip header row
-symbols = [symbol if symbol.endswith('.BO') else f"{symbol}.BO" for symbol in symbols]
+#symbols = [symbol if symbol.endswith('.BO') else f"{symbol}.BO" for symbol in symbols]
 
 # Define schema for BigQuery table
 headers = [
-    "fullTimeEmployees", "auditRisk", "boardRisk",
+    "fullTimeEmployees", "auditRisk", "boardRisk", "ytdReturn", "fundFamily", "category", "currency", "timeZoneFullName", "firstTradeDateEpochUtc", 
     "compensationRisk", "shareHolderRightsRisk", "overallRisk", "maxAge", "priceHint",
     "regularMarketOpen", "regularMarketDayLow", "regularMarketDayHigh", "dividendRate",
     "dividendYield", "exDividendDate", "payoutRatio", "fiveYearAvgDividendYield", "beta",
