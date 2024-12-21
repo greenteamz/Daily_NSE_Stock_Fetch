@@ -30,7 +30,7 @@ csv_filename_daily = f"WORLD_Stock_Daily_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}
 excel_filename = f"WORLD_Stock_Master_DataLake_score_master.xlsx"  # Excel file for today
 
 # Define base directory
-BASE_DIR = "WORLD"
+BASE_DIR = "WORLD_Test"
 
 # Subdirectories under WORLD
 MASTER_DIR = os.path.join(BASE_DIR, "master_world")
@@ -813,8 +813,8 @@ for symbol in symbols:
 
 # Define BigQuery dataset and table with the project ID
 PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
-BQ_DATASET = "World_stock_score_master"  # Replace with your dataset name
-BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.World_stock_master"  # Fully-qualified table name
+BQ_DATASET = "World_stock_score_master_test"  # Replace with your dataset name
+BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.World_stock_master_1"  # Fully-qualified table name
 
 # BigQuery authentication
 bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
