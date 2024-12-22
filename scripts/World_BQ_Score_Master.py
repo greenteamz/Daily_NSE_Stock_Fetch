@@ -300,7 +300,7 @@ def append_to_csv(data_row, total_symbol):
 
         log_message(f" count: {processed_count}/{total_symbol}")
 
-'''        
+        '''        
         # If it's the last row, calculate the ranks and update the file
         if processed_count==total_symbol:
             # Load the CSV file into DataFrame to calculate ranks
@@ -324,7 +324,8 @@ def append_to_csv(data_row, total_symbol):
                 log_message(f"Sector and Industry Rank calculation completed and saved to Master CSV file: {MASTER_CSV_FILE_PATH}")
             else:
                 print(df.columns)
-'''                
+        '''
+
     """Append a row of data to the CSV file, adding the header only if it's a new file."""
     write_header = not os.path.exists(Daily_CSV_FILE_PATH)  # Check if file exists
 
@@ -335,7 +336,8 @@ def append_to_csv(data_row, total_symbol):
             log_message(f"Header added to CSV file: {Daily_CSV_FILE_PATH}")
         writer.writerow(data_row)
         log_message(f"Appended data to Daily CSV file: {Daily_CSV_FILE_PATH}")
-'''
+        
+        '''
         # If it's the last row, calculate the ranks and update the file
         if processed_count==total_symbol:
             # Load the CSV file into DataFrame to calculate ranks
@@ -387,7 +389,7 @@ def append_to_csv(data_row, total_symbol):
             # Save the updated Excel file
             workbook.save(EXCEL_FILE_PATH)
             log_message(f"Data successfully appended to Excel file: {EXCEL_FILE_PATH}_{sheet_name}")
-'''
+        '''
 
 def append_to_excel(data_row, total_symbol):
     """Append data to an Excel sheet, creating a new sheet for the day."""
