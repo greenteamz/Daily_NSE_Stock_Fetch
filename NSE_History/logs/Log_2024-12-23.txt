@@ -1,0 +1,9 @@
+[2024-12-23 00:36:22] Fetching stock symbols from Google Sheets...
+[2024-12-23 00:39:28] Error fetching symbols: APIError: [503]: The service is currently unavailable.
+[2024-12-23 00:39:28] Summary data saved to NSE_History/csv/Summary_NSE_Stock_23_Data_2024-12-23.csv.
+[2024-12-23 00:39:28] Creating/updating Excel file with daily data...
+[2024-12-23 00:39:28] Error creating/updating Excel file: [Errno 2] No such file or directory: 'NSE_History/csv/NSE_Stock_History23_Data_2024-12-23.csv'
+[2024-12-23 00:39:29] Created dataset 'NSE_stock_history_2023'.
+[2024-12-23 00:39:30] Created table 'stockautomation-442015.NSE_stock_history_2023.stock_history_23'.
+[2024-12-23 00:39:30] Error loading data from CSV to BigQuery: [Errno 2] No such file or directory: 'NSE_History/csv/NSE_Stock_History23_Data_2024-12-23.csv'
+[2024-12-23 00:39:30] All tasks completed successfully.
