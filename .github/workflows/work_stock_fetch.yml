@@ -70,7 +70,7 @@ jobs:
       env:
         GH_PAT: ${{ secrets.GH_PAT }}
       run: |
-        git remote set-url world https://x-access-token:${GH_PAT}@github.com/greenteamz/Daily_NSE_Stock_Fetch.git
+        #git remote set-url world https://x-access-token:${GH_PAT}@github.com/greenteamz/Daily_NSE_Stock_Fetch.git
         git remote set-url origin https://x-access-token:${GH_PAT}@github.com/greenteamz/world_stock_master.git
         
         # Add files that may go beyond 100MB and push them
@@ -84,4 +84,4 @@ jobs:
 
         git commit -m "$(date) World stock update"
         git push origin main --force
-        git push world  main --force
+        #git push world  main --force
