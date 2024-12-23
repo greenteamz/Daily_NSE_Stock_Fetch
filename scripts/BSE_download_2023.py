@@ -144,6 +144,9 @@ for symbol in symbols:
         end_date = ist_date
         data = yf.download(tickers=symbol, start=start_date, end=end_date, interval="1mo", auto_adjust=True)
 
+        # Drop rows where 'Volume' is zero or NaN (indicates no trading activity)
+        data = data[data['Volume'] > 0].dropna()
+        
         if data.empty:
             log_message(f"No data found for {symbol}, skipping.")
             continue
@@ -169,7 +172,11 @@ for symbol in symbols:
 
         # Reset index to add 'Date' as a column
         data.reset_index(inplace=True)
-
+        
+        # Filter rows with valid dates (remove junk data)
+        first_valid_date = data['Date'].min()
+        data = data[data['Date'] >= first_valid_date]
+        
         # Save to daily CSV (append mode)
         if not os.path.exists(DAILY_CSV_FILE_PATH):
             data.to_csv(DAILY_CSV_FILE_PATH, mode='w', index=False, header=True)
