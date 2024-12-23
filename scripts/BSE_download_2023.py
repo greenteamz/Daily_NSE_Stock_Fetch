@@ -40,8 +40,8 @@ SUMMARY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"Summary_BSE_Stock_23_Data_{ist_n
 SERVICE_ACCOUNT_FILE = "service_account.json"
 
 # BigQuery dataset and table configuration
-BQ_DATASET = "BSE_stock_history_2023"  # Replace with your dataset name
-BQ_TABLE = "stock_history_23"        # Replace with your table name
+BQ_DATASET = "BSE_stock_history_2024"  # Replace with your dataset name
+BQ_TABLE = "stock_history_24"        # Replace with your table name
 PROJECT_ID = "stockautomation-442015"  # Replace with your GCP project ID
 
 # Initialize Google Sheets and BigQuery clients
