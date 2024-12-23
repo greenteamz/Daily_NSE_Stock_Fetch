@@ -137,12 +137,12 @@ processed_count = 0
 for symbol in symbols:
     try:
         processed_count += 1
-        log_message(f"Processing symbol: {symbol} - {processed_count}/{len(symbols)}")
+        log_message(f"NSE Processing symbol: {symbol} - {processed_count}/{len(symbols)}")
 
         # Download stock data for the symbol
         start_date = "2024-01-01"
         end_date = ist_date
-        data = yf.download(tickers=symbol, start=start_date, end=end_date, interval="1mo", auto_adjust=True)
+        data = yf.download(tickers=symbol, start=start_date, end=end_date, interval="1mo", auto_adjust=True, progress=False)
 
         # Drop rows where 'Volume' is zero or NaN (indicates no trading activity)
         data = data[data['Volume'] > 0].dropna()
@@ -207,7 +207,7 @@ for symbol in symbols:
             "Avg_Month_Volatile": avg_month_volatile,
         })
 
-        log_message(f"Data for {symbol} successfully processed.")
+        log_message(f"Data for NSE {symbol} successfully processed.")
         time.sleep(0.7)  # Delay to avoid rate-limiting
     except Exception as e:
         log_message(f"Error processing {symbol}: {e}")
@@ -243,4 +243,4 @@ try:
 except Exception as e:
     log_message(f"Error loading data from CSV to BigQuery: {e}")
 
-log_message("All tasks completed successfully.")
+log_message("All NSE tasks completed successfully.")
