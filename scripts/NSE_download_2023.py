@@ -30,18 +30,18 @@ os.makedirs(CSV_DIR, exist_ok=True)
 os.makedirs(EXCEL_DIR, exist_ok=True)
 
 # File paths
-LOG_FILE_PATH = os.path.join(LOGS_DIR, f"Log_{ist_now.strftime('%Y-%m-%d')}.txt")
+LOG_FILE_PATH = os.path.join(LOGS_DIR, f"Log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.txt")
 MASTER_CSV_FILE_PATH = os.path.join(CSV_DIR, "Master_NSE_stock_history_2023.csv")
-DAILY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"NSE_Stock_History23_Data_{ist_now.strftime('%Y-%m-%d')}.csv")
+DAILY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"NSE_Stock_History23_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
 EXCEL_FILE_PATH = os.path.join(EXCEL_DIR, f"Stock_23{ist_now.strftime('%Y_%m')}.xlsx")
-SUMMARY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"Summary_NSE_Stock_23_Data_{ist_now.strftime('%Y-%m-%d')}.csv")
+SUMMARY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"Summary_NSE_Stock_23_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
 
 # BigQuery details
 SERVICE_ACCOUNT_FILE = "service_account.json"
 
 # BigQuery dataset and table configuration
-BQ_DATASET = "NSE_stock_history_2023"  # Replace with your dataset name
-BQ_TABLE = "stock_history_23"        # Replace with your table name
+BQ_DATASET = "NSE_stock_history_2024"  # Replace with your dataset name
+BQ_TABLE = "stock_history_24"        # Replace with your table name
 PROJECT_ID = "stockautomation-442015"  # Replace with your GCP project ID
 
 # Initialize Google Sheets and BigQuery clients
