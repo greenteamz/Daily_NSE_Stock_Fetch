@@ -56,7 +56,7 @@ jobs:
     - name: Run NSE stock data BigQuery update script
       if: ${{ env.continue == 'true' }}
       run: |
-        python scripts/NSE_History_cleaned.py
+        python scripts/Cleaned_NSE_Monthly_Download.py
         
     # Step 8: Authenticate and Push Changes
     - name: Authenticate and Push Changes
