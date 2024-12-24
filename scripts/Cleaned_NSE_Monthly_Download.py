@@ -152,10 +152,12 @@ for symbol in symbols:
             continue
     
         # Determine Listed Month
+        log_message(f"Determine Listed Month  {symbol}")
         listed_month = data.iloc[0]['Date'].strftime('%Y-%m')
         data['Listed_Month'] = listed_month
     
         # Remove data for the first listing month
+        log_message(f"Remove data for the first listing month  {symbol}")
         first_month = data.iloc[0]['Date'].month
         first_year = data.iloc[0]['Date'].year
         data = data[~((data['Date'].dt.month == first_month) & (data['Date'].dt.year == first_year))]
@@ -163,6 +165,7 @@ for symbol in symbols:
         data[['Open', 'High', 'Low', 'Close']] = data[['Open', 'High', 'Low', 'Close']].round(2)
 
         # Calculate monthly change (%)
+        log_message(f"Calculate monthly change  {symbol}")
         data['Month_Change'] = ((data['Close'] - data['Open']) / data['Open']) * 100
 
         # Calculate monthly volatility (%)
@@ -182,6 +185,7 @@ for symbol in symbols:
         data.reset_index(inplace=True)
 
         # Filter rows with valid dates (remove junk data)
+        log_message(f"Filter rows with valid dates  {symbol}")
         first_valid_date = data['Date'].min()
         data = data[data['Date'] >= first_valid_date]        
                 
