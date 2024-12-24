@@ -30,18 +30,18 @@ os.makedirs(CSV_DIR, exist_ok=True)
 os.makedirs(EXCEL_DIR, exist_ok=True)
 
 # File paths
-LOG_FILE_PATH = os.path.join(LOGS_DIR, f"Log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.txt")
-MASTER_CSV_FILE_PATH = os.path.join(CSV_DIR, f"Master_NSE_stock_history_2024_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
-DAILY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"NSE_Stock_History_24_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
-EXCEL_FILE_PATH = os.path.join(EXCEL_DIR, f"Stock_24_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.xlsx")
-SUMMARY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"Summary_NSE_Stock_24_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
+LOG_FILE_PATH = os.path.join(LOGS_DIR, f"Log_C_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.txt")
+MASTER_CSV_FILE_PATH = os.path.join(CSV_DIR, "C_Master_NSE_stock_history_2024.csv")
+DAILY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"C_NSE_Stock_History_24_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
+EXCEL_FILE_PATH = os.path.join(EXCEL_DIR, f"C_Stock_24_{ist_now.strftime('%Y_%m')}.xlsx")
+SUMMARY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"C_Summary_NSE_Stock_24_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
 
 # BigQuery details
 SERVICE_ACCOUNT_FILE = "service_account.json"
 
 # BigQuery dataset and table configuration
 BQ_DATASET = "NSE_stock_history_2024"  # Replace with your dataset name
-BQ_TABLE = "stock_history_24_monthly"        # Replace with your table name
+BQ_TABLE = "stock_history_24_monthly_Cleaned"        # Replace with your table name
 PROJECT_ID = "stockautomation-442015"  # Replace with your GCP project ID
 
 # Initialize Google Sheets and BigQuery clients
@@ -151,25 +151,36 @@ for symbol in symbols:
             log_message(f"No data found for {symbol}, skipping.")
             continue
 
-        log_message(f"Filter rows with valid dates  {symbol}")
+        # Reset index to add 'Date' as a column
+        data.reset_index(inplace=True)
+
+        # Filter rows with valid dates (remove junk data)
         first_valid_date = data['Date'].min()
-        data = data[data['Date'] >= first_valid_date]  
+        data = data[data['Date'] >= first_valid_date] 
         
         # Determine Listed Month
         log_message(f"Determine Listed Month  {symbol}")
         listed_month = data.iloc[0]['Date'].strftime('%Y-%m')
         data['Listed_Month'] = listed_month
-    
-        # Remove data for the first listing month
-        log_message(f"Remove data for the first listing month  {symbol}")
+        
+       # Remove data for the first listing month
+        log_message(f"Checking if first listing month matches start date for {symbol}")
         first_month = data.iloc[0]['Date'].month
         first_year = data.iloc[0]['Date'].year
-        data = data[~((data['Date'].dt.month == first_month) & (data['Date'].dt.year == first_year))]
+
+        # Check if the first listing month matches the download start date
+        download_start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        if not (first_month == download_start_date.month and first_year == download_start_date.year):
+            log_message(f"Removing data for the first listing month for {symbol}")
+            data = data[~((data['Date'].dt.month == first_month) & (data['Date'].dt.year == first_year))]
+        else:
+            log_message(f"First listing month matches start date, skipping removal for {symbol}")
+
+
         # Round Open, High, Low, and Close to 2 decimal places
         data[['Open', 'High', 'Low', 'Close']] = data[['Open', 'High', 'Low', 'Close']].round(2)
 
         # Calculate monthly change (%)
-        log_message(f"Calculate monthly change  {symbol}")
         data['Month_Change'] = ((data['Close'] - data['Open']) / data['Open']) * 100
 
         # Calculate monthly volatility (%)
@@ -185,13 +196,7 @@ for symbol in symbols:
         # Add symbol column
         data['Symbol'] = symbol
 
-        # Reset index to add 'Date' as a column
-        data.reset_index(inplace=True)
-
-        # Filter rows with valid dates (remove junk data)
-        log_message(f"Filter rows with valid dates  {symbol}")
-        #first_valid_date = data['Date'].min()
-        #data = data[data['Date'] >= first_valid_date]        
+       
                 
         # Save to daily CSV (append mode)
         if not os.path.exists(DAILY_CSV_FILE_PATH):
