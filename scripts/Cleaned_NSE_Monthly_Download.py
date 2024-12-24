@@ -31,7 +31,7 @@ os.makedirs(EXCEL_DIR, exist_ok=True)
 
 # File paths
 LOG_FILE_PATH = os.path.join(LOGS_DIR, f"Log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.txt")
-MASTER_CSV_FILE_PATH = os.path.join(CSV_DIR, 1f"Master_NSE_stock_history_2024_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
+MASTER_CSV_FILE_PATH = os.path.join(CSV_DIR, f"Master_NSE_stock_history_2024_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
 DAILY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"NSE_Stock_History_24_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
 EXCEL_FILE_PATH = os.path.join(EXCEL_DIR, f"Stock_24_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.xlsx")
 SUMMARY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"Summary_NSE_Stock_24_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
