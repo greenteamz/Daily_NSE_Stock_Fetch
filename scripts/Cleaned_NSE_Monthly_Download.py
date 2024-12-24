@@ -186,8 +186,8 @@ for symbol in symbols:
 
         # Filter rows with valid dates (remove junk data)
         log_message(f"Filter rows with valid dates  {symbol}")
-        first_valid_date = data['Date'].min()
-        data = data[data['Date'] >= first_valid_date]        
+        #first_valid_date = data['Date'].min()
+        #data = data[data['Date'] >= first_valid_date]        
                 
         # Save to daily CSV (append mode)
         if not os.path.exists(DAILY_CSV_FILE_PATH):
