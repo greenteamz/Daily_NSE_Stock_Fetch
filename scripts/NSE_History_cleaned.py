@@ -31,13 +31,13 @@ os.makedirs(EXCEL_DIR, exist_ok=True)
 # File paths
 LOG_FILE_PATH = os.path.join(LOGS_DIR, f"Log_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.txt")
 MASTER_CSV_FILE_PATH = os.path.join(CSV_DIR, "Master_NSE_stock_history_2024.csv")
-DAILY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"NSE_Stock_History_24_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
-SUMMARY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"Summary_NSE_Stock_24_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
+DAILY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"NSE_Stock_History_Cleaned_24_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
+SUMMARY_CSV_FILE_PATH = os.path.join(CSV_DIR, f"Summary_NSE_cleaned_History_24_Data_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}.csv")
 
 # BigQuery configuration
 SERVICE_ACCOUNT_FILE = "service_account.json"
 BQ_DATASET = "NSE_stock_history_2024"
-BQ_TABLE = "stock_history_24_monthly"
+BQ_TABLE = "stock_history_24_monthly_cleaned"
 PROJECT_ID = "stockautomation-442015"
 
 # Initialize Google Sheets and BigQuery clients
@@ -95,6 +95,7 @@ def process_stock_data(data, symbol):
     data = data[data['Volume'] > 0].dropna()  # Filter rows with non-zero volume
     if data.empty:
         log_message(f"No valid data for {symbol}, skipping.")
+        print(data)
         return None
 
     # Determine Listed Month
@@ -129,7 +130,11 @@ def process_symbols(symbols):
                 tickers=symbol, start="2024-01-01", end=ist_date, interval="1mo", auto_adjust=True, progress=False
             )
             data.reset_index(inplace=True)
-            data['Date'] = pd.to_datetime(data['Date'])
+            
+            # Filter rows with valid dates (remove junk data)
+            first_valid_date = data['Date'].min()
+            data = data[data['Date'] >= first_valid_date]  
+            
             processed_data = process_stock_data(data, symbol)
 
             if processed_data is not None:
@@ -149,7 +154,8 @@ def process_symbols(symbols):
                     "Avg_Month_Volatile": round(avg_month_volatile, 2),
                 })
 
-            log_message(f"Successfully processed {symbol}.")
+            log_message(f"Successfully processed NSE {symbol}.")
+            time.sleep(0.7)  # Delay to avoid rate-limiting
         except Exception as e:
             log_message(f"Error processing {symbol}: {e}")
 
