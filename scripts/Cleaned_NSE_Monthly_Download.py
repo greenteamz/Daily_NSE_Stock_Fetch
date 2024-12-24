@@ -150,7 +150,11 @@ for symbol in symbols:
         if data.empty:
             log_message(f"No data found for {symbol}, skipping.")
             continue
-    
+
+        log_message(f"Filter rows with valid dates  {symbol}")
+        first_valid_date = data['Date'].min()
+        data = data[data['Date'] >= first_valid_date]  
+        
         # Determine Listed Month
         log_message(f"Determine Listed Month  {symbol}")
         listed_month = data.iloc[0]['Date'].strftime('%Y-%m')
