@@ -78,6 +78,11 @@ source_worksheet = spreadsheet.worksheet('symbol')  # Test sheet name
 symbols = source_worksheet.col_values(1)[1:]  # Skip header row
 symbols = [symbol if symbol.endswith('.NS') else f"{symbol}.NS" for symbol in symbols]
 
+# Define BigQuery dataset and table with the project ID
+PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
+BQ_DATASET = f"nse_stock_{current_year}"  # Replace with your dataset name
+BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_{current_year}"  # Fully-qualified table name
+
 # Define schema for BigQuery table
 headers = [
     "fullTimeEmployees", "auditRisk", "boardRisk",
@@ -198,8 +203,8 @@ data_type_map = {
     "Growth_Invs_Reson": "STRING",
     "Momentum_Invs_Recom": "STRING",
     "Momentum_Invs_Reson": "STRING",
-    "sector_rank": "INTEGER",
-    "industry_rank": "INTEGER",
+    "sector_rank": "FLOAT",
+    "industry_rank": "FLOAT",
 }
 
 rank_headers = ["sector_rank", "industry_rank"]
@@ -213,7 +218,7 @@ consolidated_file_path = os.path.join(MASTER_DIR, consolidated_file)
 def initialize_row_counter():
     if not os.path.exists(ROW_COUNTER_FILE):
         with open(ROW_COUNTER_FILE, "w") as f:
-            f.write("1")  # Start counter at 0
+            f.write("1")  # Start counter at 1
 
 def get_current_row_counter():
     with open(ROW_COUNTER_FILE, "r") as f:
@@ -273,7 +278,7 @@ def create_consolidated_csv():
     Returns:
         None
     """
-    
+    log_message("Started create_consolidated_csv.")
     df = pd.read_csv(Daily_CSV_FILE_PATH)
 
 
@@ -314,6 +319,7 @@ def create_consolidated_csv():
         with open(consolidated_file_path, mode="w", newline="") as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(headers)
+            log_message(f"Created consolidated_file_path= '{consolidated_file_path}'.")
 
     # Append data to the consolidated CSV file
     with open(consolidated_file_path, mode="a", newline="") as csv_file:
@@ -323,6 +329,7 @@ def create_consolidated_csv():
             # Create a list with all data, handling potential absence of "Stock_Volatile"
             data_row = [row[col] if col in df.columns else None for col in headers]
             writer.writerow(data_row)
+    log_message(f"Append data to '{consolidated_file_path}' file.")
 
     # Update daily change data (only for today's date)
     today_str = today.strftime("%d_%m")
@@ -335,6 +342,94 @@ def create_consolidated_csv():
 
     # Calculate and add "Stock_Volatile" column
     calculate_stock_volatility(consolidated_file_path)
+    
+    def load_consolidated_csv_to_bigquery():
+        """Load consolidated CSV data into a new BigQuery dataset and table."""
+        try:
+            # Define new BigQuery dataset and table for consolidated data
+            consolidated_dataset = f"consolidated_{current_year}"
+            consolidated_table = f"{PROJECT_ID}.{consolidated_dataset}.consolidated_nse_stock_{current_year}"
+
+            # Ensure the new dataset exists
+            try:
+                bq_client.get_dataset(consolidated_dataset)
+                log_message(f"Dataset '{consolidated_dataset}' exists.")
+            except NotFound:
+                dataset = bigquery.Dataset(f"{PROJECT_ID}.{consolidated_dataset}")
+                bq_client.create_dataset(dataset)
+                log_message(f"Created dataset '{consolidated_dataset}'.")
+
+            # Define schema for the consolidated table
+            consolidated_schema = [
+                bigquery.SchemaField(header, data_type_map.get(header, "STRING"))
+                for header in headers
+            ]             # + [
+            #     bigquery.SchemaField("Stock_Volatile", "FLOAT"),
+            #     bigquery.SchemaField("Stock_Volatile_Percentage", "FLOAT"),
+            #     bigquery.SchemaField("Expert_Comments", "STRING"),
+            #     bigquery.SchemaField("Expert_Review", "STRING")
+            # ] + [
+            #     bigquery.SchemaField(header, "FLOAT") for header in daily_change_headers
+            # ] + [
+            #     bigquery.SchemaField(header, "FLOAT") for header in weekly_change_headers
+            # ] + [
+            #     bigquery.SchemaField(header, "FLOAT") for header in monthly_change_headers
+            # ] + [
+            #     bigquery.SchemaField(header, "FLOAT") for header in yearly_change_headers
+            # ]
+
+            # Create the consolidated table if it doesn't exist
+            try:
+                bq_client.get_table(consolidated_table)
+                log_message(f"Table '{consolidated_table}' already exists.")
+            except NotFound:
+                table = bigquery.Table(consolidated_table, schema=consolidated_schema)
+                bq_client.create_table(table)
+                log_message(f"Created table '{consolidated_table}'.")
+
+            # Preprocess the consolidated CSV file
+            processed_data = preprocess_data(consolidated_file_path)
+            
+            # Write processed data back to a temporary CSV for BigQuery loading
+            consolidated_tmp_path = "consolidated_tmp.csv"
+            
+            # Check if the file exists, and delete it if it does
+            if os.path.exists(consolidated_tmp_path):
+                os.remove(consolidated_tmp_path)
+                log_message(f"Deleted the file before start - {consolidated_tmp_path}.")
+                
+            with open(consolidated_tmp_path, "w", newline="") as temp_csv:
+                writer = csv.DictWriter(temp_csv, fieldnames=processed_data[0].keys())
+                writer.writeheader()  # Write headers
+                writer.writerows(processed_data)  # Write processed rows
+            
+            log_message(f"Start to load data to BigQuery from {consolidated_tmp_path}.")
+
+            # Load the processed data into BigQuery
+            with open(consolidated_tmp_path, "rb") as csv_file:
+                job_config = bigquery.LoadJobConfig(
+                source_format=bigquery.SourceFormat.CSV,
+                skip_leading_rows=1,  # Skip header row
+                write_disposition="WRITE_APPEND",  # Append data
+                autodetect=False,
+                max_bad_records=500,  # Tolerate up to 500 bad rows
+                )
+                load_job = bq_client.load_table_from_file(
+                csv_file, consolidated_table, job_config=job_config
+                )
+                load_job.result()  # Wait for the job to complete
+                log_message(f"Data loaded to BigQuery table '{consolidated_table}' from '{consolidated_tmp_path}'.")
+
+                # Check for errors
+                if load_job.errors:
+                    log_message(f"Errors encountered during loading: {load_job.errors}")
+                else:
+                    log_message("Data loaded successfully, no errors.")
+        except Exception as e:
+            log_message(f"Error loading consolidated data to BigQuery: {e}")
+
+    # Load the consolidated CSV data into the new BigQuery table
+    load_consolidated_csv_to_bigquery()
 
 def update_consolidated_data(file_path, source_column, target_columns):
     """
@@ -345,10 +440,12 @@ def update_consolidated_data(file_path, source_column, target_columns):
         source_column: Name of the source column.
         target_columns: List of target column names.
     """
+    
     df = pd.read_csv(file_path)
     for target_column in target_columns:
         df[target_column] = df[source_column]
     df.to_csv(file_path, index=False)
+    log_message(f"Updated today change from '{source_column}' to {target_columns} .")
 
 def calculate_and_update_changes(file_path, daily_change_headers, weekly_change_headers, monthly_change_headers, business_days, yearly_change_headers):
     """
@@ -381,7 +478,7 @@ def calculate_and_update_changes(file_path, daily_change_headers, weekly_change_
 
     # Calculate yearly changes
     df[yearly_change_headers[0]] = df[monthly_change_headers].sum(axis=1)
-
+    log_message(f"Updated today changes to weekly, monthly and yearly headers.")
     df.to_csv(file_path, index=False)
 
 def calculate_stock_volatility(file_path):
@@ -397,6 +494,7 @@ def calculate_stock_volatility(file_path):
     df["Stock_Volatile_Percentage"] = (df["dayHigh"] - df["dayLow"]) / df["dayHigh"] * 100
     df["Stock_Volatile_Percentage"] = df["Stock_Volatile_Percentage"].round(2)
     df.to_csv(file_path, index=False)
+    log_message(f"Updated stock volatile into {file_path}.")
 
 
 def calculate_ranks(df, group_column, score_column, rank_column_name):
@@ -424,6 +522,7 @@ def calculate_ranks(df, group_column, score_column, rank_column_name):
 
     # Convert rank to integer (valid ranks) while keeping placeholder as 0
     df[rank_column_name] = df[rank_column_name].fillna(0).astype(int)
+    log_message(f"Calculated ranks for '{group_column}' based on '{score_column}' and saved as '{rank_column_name}'")
     return df
 
     
@@ -528,9 +627,6 @@ def append_to_csv(data_row, total_symbol):
             workbook.save(EXCEL_FILE_PATH)
             log_message(f"Data successfully appended to Excel file: {EXCEL_FILE_PATH}_{sheet_name}")
             
-            # King file for the year
-            #create_consolidated_csv(df)
-
 
 def validate_input(value, min_val=None):
     if value is None or pd.isna(value) or not isinstance(value, (int, float)):
@@ -675,7 +771,7 @@ def analyze_stock_with_profiles(info):
         momentum_reason = []
         if high_52w != 'N/A' and low_52w != 'N/A':
             price_position = (current_price - low_52w) / (high_52w - low_52w)
-            if price_poition > 0.75:
+            if price_position > 0.75:
                 momentum_reason.append("Trading near its 52-week high (bullish momentum)")
             elif price_position < 0.25:
                 momentum_reason.append("Trading near its 52-week low (bearish momentum)")
@@ -703,7 +799,7 @@ def fetch_and_update_stock_data(symbol, total_symbol):
         # Read the current row counter
         current_counter = get_current_row_counter()
 
-        log_message(f"Life count: {current_counter} Fetching data for {symbol} ...")
+        log_message(f"Life count: {current_counter} Fetching data for NSE: {symbol} ...")
         stock = yf.Ticker(symbol)
         info = stock.info
         
@@ -732,22 +828,19 @@ def fetch_and_update_stock_data(symbol, total_symbol):
         info_row = [current_counter, PREVIOUS_DAY_DATETIME, symbol] + [info.get(key, '') for key in headers]  + [today_growth_percentage, score, score_recommendation]
 
         for recom in cal_recom:
-            #print(recom)
-            #info_row.append(recom.get("Cal_Investment_Profile", ""))
             info_row.append(recom.get("Cal_Recommendation", ""))
             info_row.append(recom.get("Cal_Reason", ""))
-    
+
+        # Append data to CSV and Excel
+        append_to_csv(info_row, total_symbol)
+
         # Increment row_insert_order for the next row
         current_counter += 1
         update_row_counter(current_counter)
-        
-        # Append data to CSV and Excel
-        append_to_csv(info_row, total_symbol)
-        #append_to_excel(info_row, total_symbol)
-       
+
         return info_row
     except Exception as e:
-        log_message(f"Error fetching data for {symbol}: {e}")
+        log_message(f"Error fetching data for NSE {symbol}: {e}")
         return None
 
 # Add process data
@@ -778,7 +871,7 @@ def preprocess_data(csv_file_path):
                                 processed_row[key] = float(value)
                             except (ValueError, TypeError):
                                 # If conversion fails, set it to None
-                                processed_row[key] = 0
+                                processed_row[key] = None
                         elif expected_type == "DATETIME":
                             processed_row[key] = (
                                 datetime.strptime(value, "%Y-%m-%d %H:%M:%S") 
@@ -803,13 +896,7 @@ def preprocess_data(csv_file_path):
                             f"Row {processed_count}, Field '{key}' with value '{value}' failed conversion to {expected_type}: {ve}"
                         )
                         processed_row[key] = ""  # Default to None on error
-                        
-                    # Validate that the processed row has consistent column counts
-                    #if len(processed_row) == len(row):
-                    #    processed_rows.append(processed_row)
-                    #else:
-                    #    errors.append(f"Row {row_num} has inconsistent column counts.")
-                    
+                                        
                 processed_rows.append(processed_row)
     except Exception as e:
         log_message(f"Error reading or processing CSV file: {e}")
@@ -818,6 +905,7 @@ def preprocess_data(csv_file_path):
     if errors:
         log_message(f"Data type errors detected during preprocessing:\n" + "\n".join(errors))
     
+    log_message(f"Preprocessing completed for {len(processed_rows)} rows.")
     return processed_rows
 
 def load_data_to_bigquery():
@@ -847,14 +935,14 @@ def load_data_to_bigquery():
                 skip_leading_rows=1,  # Skip header row
                 write_disposition="WRITE_APPEND",  # Append data schema=schema
                 autodetect=False,
-                max_bad_records=5000,  # Tolerate up to 50 bad rows
+                max_bad_records=500,  # Tolerate up to 50 bad rows
                # ignore_unknown_values=True,  # Ignore unexpected columns
             )
             load_job = bq_client.load_table_from_file(
                 csv_file, BQ_TABLE, job_config=job_config
             )
             load_job.result()  # Wait for the job to complete
-            log_message("Job Done")
+            log_message(f"Data loaded to BigQuery table '{BQ_TABLE}' from {temp_csv_path}.")
             # Check for errors
             if load_job.errors:
                 log_message(f"Errors encountered during loading: {load_job.errors}")
@@ -872,9 +960,12 @@ def check_market_holiday(symbol, start_date, end_date):
     it prints 'Today is a market holiday' and exits the script.
     """
     data = yf.download(tickers=symbol, start=start_date, end=end_date, interval="1d", auto_adjust=True, progress=False)
-
-    if data.empty:
-        log_message("Today is a market holiday.")
+    log_message(f"Checking market holiday for Data for {symbol} on {start_date} to {end_date}")
+    log_message(f"Data: {data}")
+    
+    # Check if the data includes the specified date range
+    if data.empty or not (start_date in data.index and end_date in data.index):
+        log_message(f"Today is holiday or weekend. No trading data available for {symbol} from {start_date} to {end_date}.")
         sys.exit()  # Exit the script if it's a market holiday
     else:
         log_message("Today is a trading day.")
@@ -899,13 +990,12 @@ for symbol in symbols:
 
 def load_data_to_gsheet(spreadsheet):
     # Google Sheet and worksheet names
-    #spreadsheet_name = f"NSE_{current_year}"
     sheet_name = f"NSE_{current_year}"
 
     # Step 1: Read data from the CSV file
     df = pd.read_csv(consolidated_file_path)
-    df.fillna("", inplace=True)  # Replace NaN with empty strings for Google Sheets compatibility
-
+    df = df.fillna("")  # Replace NaN with empty strings for Google Sheets compatibility
+    log_message(f"Data loaded from CSV file: {consolidated_file_path} for Google Sheets.")
     # Step 3: Open or create the worksheet
     try:
         worksheet = spreadsheet.worksheet(sheet_name)
@@ -920,8 +1010,10 @@ def load_data_to_gsheet(spreadsheet):
     existing_data = worksheet.get_all_values()
     if existing_data:
         existing_df = pd.DataFrame(existing_data[1:], columns=existing_data[0])  # Convert to DataFrame
+        log_message(f"Existing data fetched from worksheet {sheet_name}.")
     else:
         existing_df = pd.DataFrame()  # If the worksheet is empty, start fresh
+        log_message(f"No existing data found in worksheet {sheet_name}.")
 
     # Step 5: Combine the new data with existing data
     if not existing_df.empty:
@@ -941,27 +1033,19 @@ def load_data_to_gsheet(spreadsheet):
 
     # Write data back to the worksheet
     worksheet.update(data_to_update)
-    log_message(f"Data updated successfully in worksheet {sheet_name}")
+    log_message(f"*** Data updated successfully in worksheet {sheet_name}. ***")
     
-    
+# BigQuery authentication
+bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
+
 # King file for the year
 create_consolidated_csv()
 
 gc = gspread.service_account(filename=SERVICE_ACCOUNT_FILE)
 # Open Google Spreadsheet
 indian_spreadsheet = gc.open('Indian_Stock_Data')  # Replace with your Google Sheet name
-#source_worksheet = spreadsheet.worksheet('symbol')  # Replace with your sheet name
-#source_worksheet = spreadsheet.worksheet('symbol_test')  # Test sheet name
 
 load_data_to_gsheet(indian_spreadsheet)
-
-# Define BigQuery dataset and table with the project ID
-PROJECT_ID = "stockautomation-442015"  # Replace with your project ID
-BQ_DATASET = f"nse_stock_{current_year}"  # Replace with your dataset name
-BQ_TABLE = f"{PROJECT_ID}.{BQ_DATASET}.daily_nse_stock_{current_year}"  # Fully-qualified table name
-
-# BigQuery authentication
-bq_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
 
 # Ensure dataset and table exist in BigQuery
 ensure_dataset_exists()
@@ -970,4 +1054,4 @@ ensure_table_exists()
 # Load the data into BigQuery from the CSV file
 load_data_to_bigquery()
 
-log_message("Script execution completed.")
+log_message("NSE Daily Script execution completed.")
