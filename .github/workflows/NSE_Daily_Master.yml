@@ -2,7 +2,7 @@ name: NSE_Daily_Automation
 
 on:
   schedule:
-    # Trigger the action every day at 6:00 PM IST (12:30 PM UTC)
+    # Trigger the action every day at 5:00 PM IST (12:30 PM UTC)
     - cron: "30 11 * * *"
   workflow_dispatch:
 
@@ -46,7 +46,7 @@ jobs:
       run: |
         DAY_OF_WEEK=$(date +%u) # 1=Monday, 7=Sunday
         if [[ "$DAY_OF_WEEK" -eq 6 || "$DAY_OF_WEEK" -eq 7 ]]; then
-          echo "continue=false" >> $GITHUB_ENV
+          echo "continue=true" >> $GITHUB_ENV
         else
           echo "continue=true" >> $GITHUB_ENV
         fi
