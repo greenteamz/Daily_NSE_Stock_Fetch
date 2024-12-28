@@ -1,9 +1,9 @@
 name: NSE_Daily_Automation
 
 on:
-  schedule:
+  #schedule:
     # Trigger the action every day at 5:00 PM IST (12:30 PM UTC)
-    - cron: "30 11 * * *"
+    #- cron: "30 11 * * *"
   workflow_dispatch:
 
 jobs:
