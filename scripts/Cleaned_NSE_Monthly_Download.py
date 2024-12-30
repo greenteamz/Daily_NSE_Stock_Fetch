@@ -157,9 +157,16 @@ for symbol in symbols:
         # Filter rows with valid dates (remove junk data)
         data['Date'] = pd.to_datetime(data['Date'])  # Ensure 'Date' is in datetime format
         
-        first_valid_date = data['Date'].min()
-        data = data[data['Date'] >= first_valid_date] 
-        
+        #first_valid_date = data['Date'].min()
+        #data = data[data['Date'] >= first_valid_date] 
+
+        # Ensure 'Date' is converted to a datetime object
+        data['Date'] = pd.to_datetime(data['Date'], format='%m/%d/%Y', errors='coerce')
+
+        # Check if the dataframe is empty or contains invalid dates
+        if data.empty or data['Date'].isna().all():
+            print("No valid data available.")
+    
         # Determine Listed Month
         log_message(f"Determine Listed Month  {symbol}")
         listed_month = data.iloc[0]['Date'].strftime('%Y-%m')
