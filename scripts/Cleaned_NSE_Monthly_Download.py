@@ -18,7 +18,7 @@ ist_now = datetime.now(IST)
 ist_date = ist_now.date()
 
 # Base directory and subdirectories
-BASE_DIR = "NSE_History"
+BASE_DIR = "NSE_History_24"
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 CSV_DIR = os.path.join(BASE_DIR, "csv")
 EXCEL_DIR = os.path.join(BASE_DIR, "excel")
