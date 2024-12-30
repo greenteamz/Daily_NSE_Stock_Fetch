@@ -173,6 +173,7 @@ for symbol in symbols:
         # Reset index to add 'Date' as a column
         data.reset_index(inplace=True)
 
+        data['Date'] = pd.to_datetime(data['Date'])  # Ensure 'Date' is in datetime format
         # Filter rows with valid dates (remove junk data)
         first_valid_date = data['Date'].min()
         data = data[data['Date'] >= first_valid_date]        
