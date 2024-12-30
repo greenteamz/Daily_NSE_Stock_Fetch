@@ -155,15 +155,15 @@ for symbol in symbols:
         data.reset_index(inplace=True)
 
         # Filter rows with valid dates (remove junk data)
-        log_message(f"Date check  {symbol}")
         data['Date'] = pd.to_datetime(data['Date'])  # Ensure 'Date' is in datetime format
-        log_message(f"Date checked  {symbol}")
+        
         first_valid_date = data['Date'].min()
         data = data[data['Date'] >= first_valid_date] 
         
         # Determine Listed Month
         log_message(f"Determine Listed Month  {symbol}")
-        listed_month = data.iloc[0]['Date'].strftime('%Y-%m')
+        listed_month = pd.to_datetime(data.iloc[0]['Date']).strftime('%Y-%m')
+        log_message(f"Listed Month checked  {symbol}")
         data['Listed_Month'] = listed_month
         
        # Remove data for the first listing month
