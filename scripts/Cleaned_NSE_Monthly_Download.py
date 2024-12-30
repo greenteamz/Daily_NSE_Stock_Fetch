@@ -155,6 +155,9 @@ for symbol in symbols:
         data.reset_index(inplace=True)
 
         # Filter rows with valid dates (remove junk data)
+        log_message(f"Date check  {symbol}")
+        data['Date'] = pd.to_datetime(data['Date'])  # Ensure 'Date' is in datetime format
+        log_message(f"Date checked  {symbol}")
         first_valid_date = data['Date'].min()
         data = data[data['Date'] >= first_valid_date] 
         
