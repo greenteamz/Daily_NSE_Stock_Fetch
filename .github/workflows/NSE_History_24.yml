@@ -66,6 +66,6 @@ jobs:
       run: |
         git remote set-url origin https://x-access-token:${GH_PAT}@github.com/greenteamz/Daily_NSE_Stock_Fetch.git
         git status
-        git add  NSE_History/*
-        git commit -m "$(date) NSE History 2023"
+        git add  NSE_*
+        git commit -m "$(date) NSE History 2024"
         git push origin main --force
