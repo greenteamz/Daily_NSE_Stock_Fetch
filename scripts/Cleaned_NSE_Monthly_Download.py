@@ -162,7 +162,8 @@ for symbol in symbols:
         
         # Determine Listed Month
         log_message(f"Determine Listed Month  {symbol}")
-        listed_month = pd.to_datetime(data.iloc[0]['Date']).strftime('%Y-%m')
+        listed_month = data.iloc[0]['Date'].strftime('%Y-%m')
+        #listed_month = pd.to_datetime(data.iloc[0]['Date']).strftime('%Y-%m')
         log_message(f"Listed Month checked  {symbol}")
         data['Listed_Month'] = listed_month
         
