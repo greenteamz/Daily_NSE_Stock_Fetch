@@ -77,7 +77,7 @@ jobs:
       run: |
         git remote set-url origin https://x-access-token:${GH_PAT}@github.com/greenteamz/Daily_NSE_Stock_Fetch.git
         git status
-        git lfs track BSE/master_bse/*
+        git lfs track BSE/master_bse/BSE_Stock_Master_BQ_score_master.csv
         git add logs/* csv/* master/* excel/* BSE/* *.csv
         git add .gitattributes
         git commit -m "$(date) BSE Daily update LFS"
