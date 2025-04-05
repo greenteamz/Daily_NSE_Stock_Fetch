@@ -25,10 +25,10 @@ month_str = ist_now.strftime('%B')  # Full month name
 
 # Generate log and CSV file names 
 log_filename = f"log_BSE_Daily_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_score_master.txt"
-master_log_filename = f"Log_Master_BSE_BigQuery_score_master.txt"
+master_log_filename = f"Log_Master_BSE_BigQuery_score_master_{month_str}.txt"
 csv_filename = f"BSE_Stock_Master_BQ_score_master_{month_str}.csv"  # Append data for the same day
 csv_filename_daily = f"BSE_Stock_Daily_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_score_master.csv"  # Append data for the same day
-excel_filename = f"BSE_Stock_Master_DataLake_score_master.xlsx"  # Excel file for today
+excel_filename = f"BSE_Stock_Master_DataLake_score_master_{month_str}.xlsx"  # Excel file for today
 
 # Define base directory
 BASE_DIR = "BSE"
@@ -37,16 +37,17 @@ BASE_DIR = "BSE"
 MASTER_DIR = os.path.join(BASE_DIR, "master_bse")
 LOGS_DIR = os.path.join(BASE_DIR, "logs_bse")
 CSV_DIR = os.path.join(BASE_DIR, "csv_bse")
+MONTHLY_DIR = os.path.join(MASTER_DIR, "monthly")  # Fixed "monthly" folder
 
 # Paths for logs, CSV, and Excel
-MASTER_LOG_FILE_PATH = os.path.join(MASTER_DIR, master_log_filename)
+MASTER_LOG_FILE_PATH = os.path.join(MONTHLY_DIR, master_log_filename)
 LOG_FILE_PATH = os.path.join(LOGS_DIR, log_filename)
-MASTER_CSV_FILE_PATH = os.path.join(MASTER_DIR, csv_filename)
+MASTER_CSV_FILE_PATH = os.path.join(MONTHLY_DIR, csv_filename)
 Daily_CSV_FILE_PATH  = os.path.join(CSV_DIR, csv_filename_daily)
-EXCEL_FILE_PATH = os.path.join(MASTER_DIR, excel_filename)
+EXCEL_FILE_PATH = os.path.join(MONTHLY_DIR, excel_filename)
 
 # Ensure all required directories exist
-os.makedirs(MASTER_DIR, exist_ok=True)
+os.makedirs(MONTHLY_DIR, exist_ok=True)
 os.makedirs(LOGS_DIR, exist_ok=True)
 os.makedirs(CSV_DIR, exist_ok=True)
 
