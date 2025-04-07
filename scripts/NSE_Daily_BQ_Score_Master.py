@@ -25,10 +25,10 @@ month_str = ist_now.strftime('%B')  # Full month name
 
 # Generate log and CSV file names 
 log_filename = f"log_Daily_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_score_master.txt"
-master_log_filename = f"Log_Master_NSE_BigQuery_score_master.txt"
+master_log_filename = f"Log_Master_NSE_BigQuery_score_master_{month_str}.txt"
 csv_filename = f"NSE_Stock_Master_BQ_score_master_{month_str}.csv"  # Append data for the same day
 csv_filename_daily = f"NSE_Stock_Daily_{ist_now.strftime('%Y-%m-%d_%H-%M-%S')}_score_master.csv"  # Append data for the same day
-excel_filename = f"NSE_Stock_Master_DataLake_score_master.xlsx"  # Excel file for today
+excel_filename = f"NSE_Stock_Master_DataLake_score_master_{month_str}.xlsx"  # Excel file for today
 
 # Define base directory
 BASE_DIR = "NSE"
@@ -37,16 +37,17 @@ BASE_DIR = "NSE"
 MASTER_DIR = os.path.join(BASE_DIR, "master_nse")
 LOGS_DIR = os.path.join(BASE_DIR, "logs_nse")
 CSV_DIR = os.path.join(BASE_DIR, "csv_nse")
+MONTHLY_DIR = os.path.join(MASTER_DIR, "monthly")  # Fixed "monthly" folder
 
 # Paths for logs, CSV, and Excel
-MASTER_LOG_FILE_PATH = os.path.join(MASTER_DIR, master_log_filename)
+MASTER_LOG_FILE_PATH = os.path.join(MONTHLY_DIR, master_log_filename)
 LOG_FILE_PATH = os.path.join(LOGS_DIR, log_filename)
-MASTER_CSV_FILE_PATH = os.path.join(MASTER_DIR, csv_filename)
+MASTER_CSV_FILE_PATH = os.path.join(MONTHLY_DIR, csv_filename)
 Daily_CSV_FILE_PATH  = os.path.join(CSV_DIR, csv_filename_daily)
-EXCEL_FILE_PATH = os.path.join(MASTER_DIR, excel_filename)
+EXCEL_FILE_PATH = os.path.join(MONTHLY_DIR, excel_filename)
 
 # Ensure all required directories exist
-os.makedirs(MASTER_DIR, exist_ok=True)
+os.makedirs(MONTHLY_DIR, exist_ok=True)
 os.makedirs(LOGS_DIR, exist_ok=True)
 os.makedirs(CSV_DIR, exist_ok=True)
 
@@ -659,6 +660,10 @@ def fetch_and_update_stock_data(symbol, total_symbol):
         if current_price != 'N/A' and previous_close != 'N/A' and previous_close != 0:
             today_growth_percentage = ((current_price - previous_close) / previous_close) * 100
             today_growth_percentage = round(today_growth_percentage, 2)
+            # Limit the range to prevent extreme values
+            if abs(today_growth_percentage) > 25:
+                log_message(f"Today_growth_percentage: {today_growth_percentage} will be 0 for NSE: {symbol}")
+                today_growth_percentage = 0
         else:
             today_growth_percentage = 'N/A'
 
